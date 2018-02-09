@@ -1,5 +1,7 @@
 package com.kiselev.matchmaker.api;
 
+import com.kiselev.matchmaker.api.model.Community;
+import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 
 import java.util.List;
@@ -10,7 +12,15 @@ import java.util.List;
  */
 public interface SocialNetworkAPI {
 
-    List<User> getFriendsByUserId(Integer userId);
-
     String getCurrentUserId();
+
+    List<User> getFriendsByUserId(String userId);
+
+    List<User> getFollowersByUserId(String userId);
+
+    List<User> getSubscriptionsByUserId(String userId);
+
+    List<Post> getPostsByUserId(String userId);
+
+    List<Community> getCommunitiesByUserId(String userId);
 }

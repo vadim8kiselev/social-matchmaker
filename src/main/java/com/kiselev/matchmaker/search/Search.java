@@ -1,14 +1,15 @@
 package com.kiselev.matchmaker.search;
 
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
+import com.kiselev.matchmaker.search.target.CommunitySearch;
+import com.kiselev.matchmaker.search.target.PostSearch;
+import com.kiselev.matchmaker.search.target.UserSearch;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Service
 public class Search {
 
     @Autowired
@@ -24,20 +25,18 @@ public class Search {
     private CommunitySearch communitySearch;
 
     public UserSearch fromMe() {
-        userSearch.setUserId(socialNetworkAPI.getCurrentUserId());
-        return userSearch;
+        return userSearch.start(socialNetworkAPI.getCurrentUserId());
     }
 
     public UserSearch fromUser(String userId) {
-        userSearch.setUserId(userId);
-        return userSearch;
+        return userSearch.start(userId);
     }
 
-    public PostSearch fromPost() {
-        return new PostSearch();
+    public PostSearch fromPost(String postId) {
+        return postSearch.start(postId); // TODO: check this
     }
 
-    public CommunitySearch fromCommunity() {
-        return new CommunitySearch();
+    public CommunitySearch fromCommunity(String communityId) {
+        return communitySearch.start(communityId);
     }
 }
