@@ -1,6 +1,6 @@
 package com.kiselev.matchmaker.rest;
 
-import com.kiselev.matchmaker.api.model.Community;
+import com.kiselev.matchmaker.api.model.Group;
 import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 import com.kiselev.matchmaker.search.Search;
@@ -22,27 +22,87 @@ public class OutputController {
     @Autowired
     private Search search;
 
+    // User
     @RequestMapping(path = "/friends", method = RequestMethod.GET)
     public List<User> friends() {
         return search
-                .fromMe()
+                .fromUser("446299337")
                 .friends()
-                .execute();
+                .where(null)
+                .perform();
+    }
+
+    @RequestMapping(path = "/followers", method = RequestMethod.GET)
+    public List<User> followers() {
+        return search
+                .fromUser("42597474")
+                .followers()
+                .where(null)
+                .perform();
+    }
+
+    @RequestMapping(path = "/subscriptions", method = RequestMethod.GET)
+    public List<User> subscriptions() {
+        return search
+                .fromUser("42597474")
+                .subscriptions()
+                .where(null)
+                .perform();
     }
 
     @RequestMapping(path = "/posts", method = RequestMethod.GET)
     public List<Post> posts() {
         return search
-                .fromMe()
+                .fromUser("42597474")
                 .posts()
-                .execute();
+                .where(null)
+                .perform();
     }
 
-    @RequestMapping(path = "/communities", method = RequestMethod.GET)
-    public List<Community> communities() {
+    @RequestMapping(path = "/groups", method = RequestMethod.GET)
+    public List<Group> groups() {
         return search
-                .fromMe()
-                .communities()
-                .execute();
+                .fromUser("42597474")
+                .groups()
+                .where(null)
+                .perform();
+    }
+
+    // Post
+    @RequestMapping(path = "/likers", method = RequestMethod.GET)
+    public List<User> likers() {
+        return search
+                .fromPost("42597474_4424")
+                .likers()
+                .where(null)
+                .perform();
+    }
+
+    @RequestMapping(path = "/sharers", method = RequestMethod.GET)
+    public List<User> sharers() {
+        return search
+                .fromPost("42597474_4424")
+                .sharers()
+                .where(null)
+                .perform();
+    }
+
+    // Groups
+    @RequestMapping(path = "/subscribers", method = RequestMethod.GET)
+    public List<User> subscribers() {
+        return search
+                .fromGroup("112233021")
+                .subscribers()
+                .where(null)
+                .perform();
+    }
+
+    @RequestMapping(path = "/groupPosts", method = RequestMethod.GET)
+    public List<Post> groupPosts() {
+        return search
+                .fromGroup("-112233021")
+                .posts()
+                .where(null)
+                .perform();
     }
 }

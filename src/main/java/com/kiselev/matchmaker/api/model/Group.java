@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Builder
 @Getter
-public class Community {
+public class Group {
     private String id;
     private String name;
     private String status;

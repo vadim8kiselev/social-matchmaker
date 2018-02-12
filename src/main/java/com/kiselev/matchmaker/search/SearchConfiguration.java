@@ -1,10 +1,16 @@
 package com.kiselev.matchmaker.search;
 
-import com.kiselev.matchmaker.search.response.FilteredExecutableResponse;
-import com.kiselev.matchmaker.search.response.NonFilteredExecutableResponse;
-import com.kiselev.matchmaker.search.target.CommunitySearch;
-import com.kiselev.matchmaker.search.target.PostSearch;
-import com.kiselev.matchmaker.search.target.UserSearch;
+import com.kiselev.matchmaker.search.condition.applier.implementation.GroupConditionApplier;
+import com.kiselev.matchmaker.search.condition.applier.implementation.PostConditionApplier;
+import com.kiselev.matchmaker.search.condition.applier.implementation.UserConditionApplier;
+import com.kiselev.matchmaker.search.operation.implementation.GroupOperation;
+import com.kiselev.matchmaker.search.operation.implementation.PostOperation;
+import com.kiselev.matchmaker.search.operation.implementation.UserOperation;
+import com.kiselev.matchmaker.search.service.SearchService;
+import com.kiselev.matchmaker.search.service.implementation.GroupSearch;
+import com.kiselev.matchmaker.search.service.implementation.PostSearch;
+import com.kiselev.matchmaker.search.service.implementation.UserSearch;
+import com.kiselev.matchmaker.search.service.state.LoopFabric;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -20,7 +26,7 @@ public class SearchConfiguration {
     @Bean
     @Scope(scopeName = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public Search search() {
-        return new Search();
+        return new SearchService();
     }
 
     @Bean
@@ -37,19 +43,45 @@ public class SearchConfiguration {
 
     @Bean
     @Scope("prototype")
-    public CommunitySearch communitySearch() {
-        return new CommunitySearch();
+    public GroupSearch groupSearch() {
+        return new GroupSearch();
     }
 
     @Bean
     @Scope("prototype")
-    public NonFilteredExecutableResponse nonFilteredResponse() {
-        return new NonFilteredExecutableResponse();
+    public UserOperation userOperation() {
+        return new UserOperation();
     }
 
     @Bean
     @Scope("prototype")
-    public FilteredExecutableResponse filteredResponse() {
-        return new FilteredExecutableResponse();
+    public PostOperation postOperation() {
+        return new PostOperation();
+    }
+
+    @Bean
+    @Scope("prototype")
+    public GroupOperation groupOperation() {
+        return new GroupOperation();
+    }
+
+    @Bean
+    public LoopFabric loopFabric() {
+        return new LoopFabric();
+    }
+
+    @Bean
+    public UserConditionApplier userConditionApplier() {
+        return new UserConditionApplier();
+    }
+
+    @Bean
+    public PostConditionApplier postConditionApplier() {
+        return new PostConditionApplier();
+    }
+
+    @Bean
+    public GroupConditionApplier groupConditionApplier() {
+        return new GroupConditionApplier();
     }
 }

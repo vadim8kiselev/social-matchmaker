@@ -1,19 +1,17 @@
 package com.kiselev.matchmaker.api.implementation.vk;
 
 import com.kiselev.matchmaker.api.EntityConverter;
-import com.kiselev.matchmaker.api.model.Community;
+import com.kiselev.matchmaker.api.model.Group;
 import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.users.UserFull;
 import com.vk.api.sdk.objects.wall.WallpostFull;
-import org.springframework.stereotype.Component;
 
 /**
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Component
 public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull, GroupFull> {
 
     @Override
@@ -44,12 +42,12 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
     }
 
     @Override
-    public Community convertGroup(GroupFull externalCommunity) {
-        return Community.builder()
-                .id(externalCommunity.getId())
-                .name(externalCommunity.getName())
-                .status(externalCommunity.getStatus())
-                .numberOfSubscribers(externalCommunity.getMembersCount() != null ? externalCommunity.getMembersCount().toString() : "")
+    public Group convertGroup(GroupFull externalGroup) {
+        return Group.builder()
+                .id(externalGroup.getId())
+                .name(externalGroup.getName())
+                .status(externalGroup.getStatus())
+                .numberOfSubscribers(externalGroup.getMembersCount() != null ? externalGroup.getMembersCount().toString() : "")
                 .build();
     }
 

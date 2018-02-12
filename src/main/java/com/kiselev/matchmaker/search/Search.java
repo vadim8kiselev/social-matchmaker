@@ -1,42 +1,26 @@
 package com.kiselev.matchmaker.search;
 
-import com.kiselev.matchmaker.api.SocialNetworkAPI;
-import com.kiselev.matchmaker.search.target.CommunitySearch;
-import com.kiselev.matchmaker.search.target.PostSearch;
-import com.kiselev.matchmaker.search.target.UserSearch;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.kiselev.matchmaker.search.service.implementation.GroupSearch;
+import com.kiselev.matchmaker.search.service.implementation.PostSearch;
+import com.kiselev.matchmaker.search.service.implementation.UserSearch;
+
+import java.util.List;
 
 /**
  * @author: Vadim Kiselev
- * @date: 24.01.2018
+ * @date: 12.02.2018
  */
-public class Search {
+public interface Search {
 
-    @Autowired
-    private SocialNetworkAPI socialNetworkAPI;
+    UserSearch fromUser(String userId);
 
-    @Autowired
-    private UserSearch userSearch;
+    UserSearch fromUsers(List<String> userIds);
 
-    @Autowired
-    private PostSearch postSearch;
+    PostSearch fromPost(String postId);
 
-    @Autowired
-    private CommunitySearch communitySearch;
+    PostSearch fromPosts(List<String> postIds);
 
-    public UserSearch fromMe() {
-        return userSearch.start(socialNetworkAPI.getCurrentUserId());
-    }
+    GroupSearch fromGroup(String groupId);
 
-    public UserSearch fromUser(String userId) {
-        return userSearch.start(userId);
-    }
-
-    public PostSearch fromPost(String postId) {
-        return postSearch.start(postId); // TODO: check this
-    }
-
-    public CommunitySearch fromCommunity(String communityId) {
-        return communitySearch.start(communityId);
-    }
+    GroupSearch fromGroups(List<String> groupIds);
 }
