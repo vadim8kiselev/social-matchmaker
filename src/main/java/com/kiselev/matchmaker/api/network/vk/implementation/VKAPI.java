@@ -1,4 +1,4 @@
-package com.kiselev.matchmaker.api.implementation.vk;
+package com.kiselev.matchmaker.api.network.vk.implementation;
 
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
@@ -10,7 +10,6 @@ import com.kiselev.matchmaker.api.model.User;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ApiUserDeletedException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.groups.GroupFull;
@@ -50,12 +49,9 @@ public class VKAPI implements SocialNetworkAPI {
         user = new UserActor(userId, token);
     }
 
-    @Override
-    public String getCurrentUserId() {
-        return user.getId().toString();
-    }
-
-    // User
+    /**
+     * User related methods
+     */
     @Override
     public List<User> getFriendsByUserId(String userId) {
         try {
@@ -144,11 +140,13 @@ public class VKAPI implements SocialNetworkAPI {
         return Lists.newArrayList();
     }
 
-    // Post
+    /**
+     * Post related methods
+     */
     @Override
-    public List<User> getLikersByPostId(String ownerId, String postId) {
+    public List<User> getLikesByPostId(String ownerId, String postId) {
         try {
-            List<String> likersIds = vk.likes().getList(user, LikesType.POST)
+            List<String> likesIds = vk.likes().getList(user, LikesType.POST)
                     .ownerId(Integer.parseInt(ownerId))
                     .count(1000)
                     .itemId(Integer.parseInt(postId))
@@ -156,7 +154,7 @@ public class VKAPI implements SocialNetworkAPI {
                     .map(Object::toString)
                     .collect(Collectors.toList());
 
-            return vk.users().get(user).userIds(likersIds)
+            return vk.users().get(user).userIds(likesIds)
                     .execute().stream()
                     .map(converter::convertUser)
                     .collect(Collectors.toList());
@@ -168,7 +166,7 @@ public class VKAPI implements SocialNetworkAPI {
     }
 
     @Override
-    public List<User> getSharersByPostId(String ownerId, String postId) {
+    public List<User> getSharesByPostId(String ownerId, String postId) {
         try {
             List<String> sharersIds = vk.wall().getReposts(user)
                     .ownerId(Integer.parseInt(ownerId))
@@ -192,7 +190,9 @@ public class VKAPI implements SocialNetworkAPI {
         return Lists.newArrayList();
     }
 
-    // Group
+    /**
+     * Group related methods
+     */
     @Override
     public List<User> getSubscribersByGroupId(String groupId) {
         try {
@@ -228,9 +228,5 @@ public class VKAPI implements SocialNetworkAPI {
         }
 
         return Lists.newArrayList();
-    }
-
-    public void setConverter(EntityConverter<UserFull, WallpostFull, GroupFull> converter) {
-        this.converter = converter;
     }
 }

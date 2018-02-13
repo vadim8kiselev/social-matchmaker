@@ -39,7 +39,7 @@ public class PostOperation implements StatefulOperation<Post>, FilterableOperati
     }
 
     public PostSearch then() {
-        return loopFabric.createPostSearch().from(posts.stream()
+        return loopFabric.createSearch().fromPosts(posts.stream()
                 .map(Post::getId)
                 .collect(Collectors.toList()));
     }

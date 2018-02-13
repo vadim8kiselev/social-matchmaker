@@ -39,7 +39,7 @@ public class UserOperation implements StatefulOperation<User>, FilterableOperati
     }
 
     public UserSearch then() {
-        return loopFabric.createUserSearch().from(users.stream()
+        return loopFabric.createSearch().fromUsers(users.stream()
                 .map(User::getId)
                 .collect(Collectors.toList()));
     }

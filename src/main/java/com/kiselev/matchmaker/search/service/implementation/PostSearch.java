@@ -26,20 +26,20 @@ public class PostSearch implements StatefulSearch {
     //   Map: owner_id, post_id
     private Map<String, String> postIds;
 
-    public UserOperation likers() {
-        List<User> likers = postIds.entrySet().stream()
-                .map(entry -> socialNetworkAPI.getLikersByPostId(entry.getKey(), entry.getValue()))
+    public UserOperation likes() {
+        List<User> likes = postIds.entrySet().stream()
+                .map(entry -> socialNetworkAPI.getLikesByPostId(entry.getKey(), entry.getValue()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return userOperation.from(likers);
+        return userOperation.from(likes);
     }
 
-    public UserOperation sharers() {
-        List<User> sharers = postIds.entrySet().stream()
-                .map(entry -> socialNetworkAPI.getSharersByPostId(entry.getKey(), entry.getValue()))
+    public UserOperation shares() {
+        List<User> shares = postIds.entrySet().stream()
+                .map(entry -> socialNetworkAPI.getSharesByPostId(entry.getKey(), entry.getValue()))
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return userOperation.from(sharers);
+        return userOperation.from(shares);
     }
 
     @Override

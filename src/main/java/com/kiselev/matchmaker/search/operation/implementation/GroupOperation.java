@@ -39,7 +39,7 @@ public class GroupOperation implements StatefulOperation<Group>, FilterableOpera
     }
 
     public GroupSearch then() {
-        return loopFabric.createGroupSearch().from(groups.stream()
+        return loopFabric.createSearch().fromGroups(groups.stream()
                 .map(Group::getId)
                 .collect(Collectors.toList()));
     }

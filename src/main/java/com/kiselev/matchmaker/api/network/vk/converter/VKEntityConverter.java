@@ -1,4 +1,4 @@
-package com.kiselev.matchmaker.api.implementation.vk;
+package com.kiselev.matchmaker.api.network.vk.converter;
 
 import com.kiselev.matchmaker.api.EntityConverter;
 import com.kiselev.matchmaker.api.model.Group;

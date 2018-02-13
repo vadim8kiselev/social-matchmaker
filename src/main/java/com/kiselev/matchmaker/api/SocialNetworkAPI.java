@@ -12,11 +12,9 @@ import java.util.List;
  */
 public interface SocialNetworkAPI {
 
-    void auth();
-
-    String getCurrentUserId();
-
-    // User
+    /**
+     * User related methods
+     */
     List<User> getFriendsByUserId(String userId);
 
     List<User> getFollowersByUserId(String userId);
@@ -27,12 +25,16 @@ public interface SocialNetworkAPI {
 
     List<Group> getGroupsByUserId(String userId);
 
-    // Post
-    List<User> getLikersByPostId(String ownerId, String postId);
+    /**
+     * Post related methods
+     */
+    List<User> getLikesByPostId(String ownerId, String postId);
 
-    List<User> getSharersByPostId(String ownerId, String postId);
+    List<User> getSharesByPostId(String ownerId, String postId);
 
-    // Group
+    /**
+     * Group related methods
+     */
     List<User> getSubscribersByGroupId(String groupId);
 
     List<Post> getPostsByGroupId(String groupId);

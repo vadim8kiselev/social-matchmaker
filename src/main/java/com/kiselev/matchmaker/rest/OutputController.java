@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
+ * Temporary rest service for testing of Java API
+ *
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
@@ -26,7 +28,7 @@ public class OutputController {
     @RequestMapping(path = "/friends", method = RequestMethod.GET)
     public List<User> friends() {
         return search
-                .fromUser("446299337")
+                .fromUser("42597474")
                 .friends()
                 .where(null)
                 .perform();
@@ -69,20 +71,20 @@ public class OutputController {
     }
 
     // Post
-    @RequestMapping(path = "/likers", method = RequestMethod.GET)
-    public List<User> likers() {
+    @RequestMapping(path = "/likes", method = RequestMethod.GET)
+    public List<User> likes() {
         return search
                 .fromPost("42597474_4424")
-                .likers()
+                .likes()
                 .where(null)
                 .perform();
     }
 
-    @RequestMapping(path = "/sharers", method = RequestMethod.GET)
-    public List<User> sharers() {
+    @RequestMapping(path = "/shares", method = RequestMethod.GET)
+    public List<User> shares() {
         return search
                 .fromPost("42597474_4424")
-                .sharers()
+                .shares()
                 .where(null)
                 .perform();
     }
