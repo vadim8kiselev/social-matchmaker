@@ -5,6 +5,7 @@ import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Vadim Kiselev
@@ -15,6 +16,8 @@ public interface SocialNetworkAPI {
     /**
      * User related methods
      */
+    List<User> getUsersByUsersIds(List<String> usersIds);
+
     List<User> getFriendsByUserId(String userId);
 
     List<User> getFollowersByUserId(String userId);
@@ -28,6 +31,8 @@ public interface SocialNetworkAPI {
     /**
      * Post related methods
      */
+    List<Post> getPostsByPostsIds(Map<String, List<String>> postsIds);
+
     List<User> getLikesByPostId(String ownerId, String postId);
 
     List<User> getSharesByPostId(String ownerId, String postId);
@@ -35,6 +40,8 @@ public interface SocialNetworkAPI {
     /**
      * Group related methods
      */
+    List<Group> getGroupsByGroupsIds(List<String> groupsIds);
+
     List<User> getSubscribersByGroupId(String groupId);
 
     List<Post> getPostsByGroupId(String groupId);

@@ -12,9 +12,11 @@ import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
 import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.UserAuthResponse;
 import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.users.UserFull;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import com.vk.api.sdk.queries.groups.GroupField;
 import com.vk.api.sdk.queries.likes.LikesType;
 import com.vk.api.sdk.queries.users.UserField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +56,22 @@ public class VKAPI implements SocialNetworkAPI {
      * User related methods
      */
     @Override
+    public List<User> getUsersByUsersIds(List<String> usersIds) {
+        try {
+            return vk.users()
+                    .get(user)
+                    .fields(UserField.values())
+                    .userIds(usersIds)
+                    .execute().stream()
+                    .map(converter::convertUser)
+                    .collect(Collectors.toList());
+        } catch (ApiException | ClientException e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
     public List<User> getFriendsByUserId(String userId) {
         try {
             return vk.friends()
@@ -65,7 +84,7 @@ public class VKAPI implements SocialNetworkAPI {
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
-        return null;
+        return Lists.newArrayList();
     }
 
     @Override
@@ -97,6 +116,7 @@ public class VKAPI implements SocialNetworkAPI {
 
             return vk.users().get(user)
                     .userIds(subscriptionsIds)
+                    .fields(UserField.values())
                     .execute().stream()
                     .map(converter::convertUser)
                     .collect(Collectors.toList());
@@ -126,6 +146,7 @@ public class VKAPI implements SocialNetworkAPI {
         try {
             List<String> groupsIds = vk.groups().get(user)
                     .userId(Integer.parseInt(userId))
+                    .fields(GroupField.values())
                     .execute().getItems().stream()
                     .map(Object::toString)
                     .collect(Collectors.toList());
@@ -144,6 +165,26 @@ public class VKAPI implements SocialNetworkAPI {
      * Post related methods
      */
     @Override
+    public List<Post> getPostsByPostsIds(Map<String, List<String>> postsIds) {
+        try {
+            List<String> posts = postsIds.entrySet().stream()
+                    .map(entry -> entry.getValue().stream()
+                            .map(postId -> entry.getKey() + "_" + postId)
+                            .collect(Collectors.toList()))
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+
+            return vk.wall().getById(user, posts)
+                    .execute().stream()
+                    .map(converter::convertPost)
+                    .collect(Collectors.toList());
+        } catch (ApiException | ClientException e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
+    @Override
     public List<User> getLikesByPostId(String ownerId, String postId) {
         try {
             List<String> likesIds = vk.likes().getList(user, LikesType.POST)
@@ -154,14 +195,15 @@ public class VKAPI implements SocialNetworkAPI {
                     .map(Object::toString)
                     .collect(Collectors.toList());
 
-            return vk.users().get(user).userIds(likesIds)
+            return vk.users().get(user)
+                    .userIds(likesIds)
+                    .fields(UserField.values())
                     .execute().stream()
                     .map(converter::convertUser)
                     .collect(Collectors.toList());
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
-
         return Lists.newArrayList();
     }
 
@@ -179,6 +221,7 @@ public class VKAPI implements SocialNetworkAPI {
 
             return vk.users().get(user)
                     .userIds(sharersIds)
+                    .fields(UserField.values())
                     .execute().stream()
                     .map(converter::convertUser)
                     .collect(Collectors.toList());
@@ -186,13 +229,27 @@ public class VKAPI implements SocialNetworkAPI {
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
-
         return Lists.newArrayList();
     }
 
     /**
      * Group related methods
      */
+    @Override
+    public List<Group> getGroupsByGroupsIds(List<String> groupsIds) {
+        try {
+            return vk.groups().getById(user)
+                    .fields(GroupField.values())
+                    .groupIds(groupsIds)
+                    .execute().stream()
+                    .map(converter::convertGroup)
+                    .collect(Collectors.toList());
+        } catch (ApiException | ClientException e) {
+            e.printStackTrace();
+        }
+        return Lists.newArrayList();
+    }
+
     @Override
     public List<User> getSubscribersByGroupId(String groupId) {
         try {
@@ -204,13 +261,13 @@ public class VKAPI implements SocialNetworkAPI {
 
             return vk.users().get(user)
                     .userIds(subscribers)
+                    .fields(UserField.values())
                     .execute().stream()
                     .map(converter::convertUser)
                     .collect(Collectors.toList());
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
-
         return Lists.newArrayList();
     }
 
@@ -226,7 +283,6 @@ public class VKAPI implements SocialNetworkAPI {
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
-
         return Lists.newArrayList();
     }
 }

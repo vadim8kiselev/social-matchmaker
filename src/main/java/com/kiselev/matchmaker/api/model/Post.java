@@ -15,4 +15,15 @@ public class Post {
     private String ownerId;
     private String text;
     private String date;
+
+    private String likesCount;
+    private String sharesCount;
+    private String viewsCount;
+    private String commentsCount;
+
+    private String geo;
+    private String attachments;
+
+    private String type;
+    private String platform;
 }

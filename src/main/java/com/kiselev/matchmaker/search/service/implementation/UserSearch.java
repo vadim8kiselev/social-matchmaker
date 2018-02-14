@@ -8,6 +8,7 @@ import com.kiselev.matchmaker.api.model.User;
 import com.kiselev.matchmaker.search.operation.implementation.GroupOperation;
 import com.kiselev.matchmaker.search.operation.implementation.PostOperation;
 import com.kiselev.matchmaker.search.operation.implementation.UserOperation;
+import com.kiselev.matchmaker.search.service.PerformableSearch;
 import com.kiselev.matchmaker.search.service.StatefulSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-public class UserSearch implements StatefulSearch {
+public class UserSearch implements StatefulSearch, PerformableSearch<User> {
 
     @Autowired
     private SocialNetworkAPI socialNetworkAPI;
@@ -84,5 +85,10 @@ public class UserSearch implements StatefulSearch {
     public UserSearch from(List<String> userIds) {
         this.userIds = Lists.newArrayList(userIds);
         return this;
+    }
+
+    @Override
+    public List<User> perform() {
+        return socialNetworkAPI.getUsersByUsersIds(userIds);
     }
 }

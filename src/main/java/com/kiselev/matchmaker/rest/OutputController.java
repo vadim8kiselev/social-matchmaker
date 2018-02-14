@@ -1,5 +1,6 @@
 package com.kiselev.matchmaker.rest;
 
+import com.google.common.collect.Lists;
 import com.kiselev.matchmaker.api.model.Group;
 import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Temporary rest service for testing of Java API
@@ -25,10 +28,20 @@ public class OutputController {
     private Search search;
 
     // User
+    @RequestMapping(path = "/users", method = RequestMethod.GET)
+    public List<User> user() {
+        return search
+                .fromUsers(IntStream.rangeClosed(1, 1000)
+                        .boxed()
+                        .map(Object::toString)
+                        .collect(Collectors.toList()))
+                .perform();
+    }
+
     @RequestMapping(path = "/friends", method = RequestMethod.GET)
     public List<User> friends() {
         return search
-                .fromUser("42597474")
+                .fromUser("3837686")
                 .friends()
                 .where(null)
                 .perform();
@@ -55,16 +68,14 @@ public class OutputController {
     @RequestMapping(path = "/posts", method = RequestMethod.GET)
     public List<Post> posts() {
         return search
-                .fromUser("42597474")
-                .posts()
-                .where(null)
+                .fromPosts(Lists.newArrayList("42597474_4424", "42597474_4426", "280512823_193", "177079109_326", "177079109_329"))
                 .perform();
     }
 
     @RequestMapping(path = "/groups", method = RequestMethod.GET)
     public List<Group> groups() {
         return search
-                .fromUser("42597474")
+                .fromUser("3837686")
                 .groups()
                 .where(null)
                 .perform();

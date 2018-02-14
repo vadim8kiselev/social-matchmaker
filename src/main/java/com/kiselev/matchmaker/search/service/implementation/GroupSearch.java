@@ -2,10 +2,12 @@ package com.kiselev.matchmaker.search.service.implementation;
 
 import com.google.common.collect.Lists;
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
+import com.kiselev.matchmaker.api.model.Group;
 import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 import com.kiselev.matchmaker.search.operation.implementation.PostOperation;
 import com.kiselev.matchmaker.search.operation.implementation.UserOperation;
+import com.kiselev.matchmaker.search.service.PerformableSearch;
 import com.kiselev.matchmaker.search.service.StatefulSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-public class GroupSearch implements StatefulSearch {
+public class GroupSearch implements StatefulSearch, PerformableSearch<Group> {
 
     @Autowired
     private SocialNetworkAPI socialNetworkAPI;
@@ -55,5 +57,10 @@ public class GroupSearch implements StatefulSearch {
     public GroupSearch from(List<String> groupIds) {
         this.groupIds = Lists.newArrayList(groupIds);
         return this;
+    }
+
+    @Override
+    public List<Group> perform() {
+        return socialNetworkAPI.getGroupsByGroupsIds(groupIds);
     }
 }

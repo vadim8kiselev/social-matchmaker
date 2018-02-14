@@ -6,12 +6,18 @@ import com.kiselev.matchmaker.api.model.Post;
 import com.kiselev.matchmaker.api.model.User;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
 public class FacebookAPI implements SocialNetworkAPI {
+
+    @Override
+    public List<User> getUsersByUsersIds(List<String> usersIds) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
 
     @Override
     public List<User> getFriendsByUserId(String userId) {
@@ -39,12 +45,22 @@ public class FacebookAPI implements SocialNetworkAPI {
     }
 
     @Override
+    public List<Post> getPostsByPostsIds(Map<String, List<String>> postsIds) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
+
+    @Override
     public List<User> getLikesByPostId(String ownerId, String postId) {
         throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
     @Override
     public List<User> getSharesByPostId(String ownerId, String postId) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
+
+    @Override
+    public List<Group> getGroupsByGroupsIds(List<String> groupsIds) {
         throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
