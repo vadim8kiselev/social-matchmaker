@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-public class PostOperation implements StatefulOperation<Post>, FilterableOperation, RepeatableOperation<PostSearch>, PerformableOperation<Post> {
+public class PostOperation implements StatefulOperation<Post>, FilterableOperation<Post>, RepeatableOperation<PostSearch>, PerformableOperation<Post> {
 
     @Autowired
     private LoopFabric loopFabric;
@@ -34,7 +34,7 @@ public class PostOperation implements StatefulOperation<Post>, FilterableOperati
         return this;
     }
 
-    public PostOperation where(Condition condition) {
+    public PostOperation where(Condition<Post> condition) {
         return from(postConditionApplier.apply(posts, condition));
     }
 

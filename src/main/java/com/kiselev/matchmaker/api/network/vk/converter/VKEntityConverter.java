@@ -10,11 +10,7 @@ import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.groups.LinksItem;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.polls.Answer;
-import com.vk.api.sdk.objects.users.Career;
-import com.vk.api.sdk.objects.users.Military;
-import com.vk.api.sdk.objects.users.School;
-import com.vk.api.sdk.objects.users.University;
-import com.vk.api.sdk.objects.users.UserFull;
+import com.vk.api.sdk.objects.users.*;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.WallpostFull;
@@ -105,8 +101,8 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                         : "")
                 .text(externalPost.getText())
 
-                .likesCount(externalPost.getLikes() != null ?externalPost.getLikes().getCount().toString() : "")
-                .sharesCount(externalPost.getReposts() != null ?externalPost.getReposts().getCount().toString() : "")
+                .likesCount(externalPost.getLikes() != null ? externalPost.getLikes().getCount().toString() : "")
+                .sharesCount(externalPost.getReposts() != null ? externalPost.getReposts().getCount().toString() : "")
                 .viewsCount(externalPost.getViews() != null ? externalPost.getViews().getCount().toString() : "")
                 .commentsCount(externalPost.getComments() != null ? externalPost.getComments().getCount().toString() : "")
 
@@ -257,22 +253,52 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
         String attachment = "";
 
         switch (type) {
-            case APP: attachment = postAttachment.getApp().getName(); break;
-            case DOC: attachment = postAttachment.getDoc().getTitle(); break;
-            case LINK: attachment = postAttachment.getLink().getUrl(); break;
-            case NOTE: attachment = postAttachment.getNote().getTitle(); break;
-            case PAGE: attachment = postAttachment.getPage().getTitle(); break;
-            case POLL: attachment = postAttachment.getPoll().getQuestion()
-                    + " [" + String.join("; ", postAttachment.getPoll().getAnswers().stream().map(Answer::getText).collect(Collectors.toList()))  +"]"; break;
-            case ALBUM: attachment = postAttachment.getAlbum().getTitle(); break;
-            case AUDIO: attachment = postAttachment.getAudio().getArtist() + " - " + postAttachment.getAudio().getTitle(); break;
-            case PHOTO: attachment = photoToString(postAttachment.getPhoto()); break;
-            case VIDEO: attachment = postAttachment.getVideo().getTitle(); break;
-            case MARKET: attachment = postAttachment.getMarket().getTitle(); break;
-            case GRAFFITI: attachment = postAttachment.getGraffiti().getPhoto586(); break;
-            case PHOTOS_LIST: attachment = String.join(", ", postAttachment.getPhotosList()); break;
-            case POSTED_PHOTO: attachment = postAttachment.getPostedPhoto().getPhoto604(); break;
-            case MARKET_MARKET_ALBUM: attachment = postAttachment.getMarketMarketAlbum().getTitle(); break;
+            case APP:
+                attachment = postAttachment.getApp().getName();
+                break;
+            case DOC:
+                attachment = postAttachment.getDoc().getTitle();
+                break;
+            case LINK:
+                attachment = postAttachment.getLink().getUrl();
+                break;
+            case NOTE:
+                attachment = postAttachment.getNote().getTitle();
+                break;
+            case PAGE:
+                attachment = postAttachment.getPage().getTitle();
+                break;
+            case POLL:
+                attachment = postAttachment.getPoll().getQuestion()
+                        + " [" + String.join("; ", postAttachment.getPoll().getAnswers().stream().map(Answer::getText).collect(Collectors.toList())) + "]";
+                break;
+            case ALBUM:
+                attachment = postAttachment.getAlbum().getTitle();
+                break;
+            case AUDIO:
+                attachment = postAttachment.getAudio().getArtist() + " - " + postAttachment.getAudio().getTitle();
+                break;
+            case PHOTO:
+                attachment = photoToString(postAttachment.getPhoto());
+                break;
+            case VIDEO:
+                attachment = postAttachment.getVideo().getTitle();
+                break;
+            case MARKET:
+                attachment = postAttachment.getMarket().getTitle();
+                break;
+            case GRAFFITI:
+                attachment = postAttachment.getGraffiti().getPhoto586();
+                break;
+            case PHOTOS_LIST:
+                attachment = String.join(", ", postAttachment.getPhotosList());
+                break;
+            case POSTED_PHOTO:
+                attachment = postAttachment.getPostedPhoto().getPhoto604();
+                break;
+            case MARKET_MARKET_ALBUM:
+                attachment = postAttachment.getMarketMarketAlbum().getTitle();
+                break;
         }
 
         return type.name() + " - " + attachment;

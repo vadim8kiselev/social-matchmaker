@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-public class GroupOperation implements StatefulOperation<Group>, FilterableOperation, RepeatableOperation<GroupSearch>, PerformableOperation<Group> {
+public class GroupOperation implements StatefulOperation<Group>, FilterableOperation<Group>, RepeatableOperation<GroupSearch>, PerformableOperation<Group> {
 
     @Autowired
     private LoopFabric loopFabric;
@@ -34,7 +34,7 @@ public class GroupOperation implements StatefulOperation<Group>, FilterableOpera
         return this;
     }
 
-    public GroupOperation where(Condition condition) {
+    public GroupOperation where(Condition<Group> condition) {
         return from(groupConditionApplier.apply(groups, condition));
     }
 

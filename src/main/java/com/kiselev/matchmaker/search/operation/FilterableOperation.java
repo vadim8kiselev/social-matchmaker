@@ -3,7 +3,7 @@ package com.kiselev.matchmaker.search.operation;
 import com.kiselev.matchmaker.search.condition.Condition;
 
 @FunctionalInterface
-public interface FilterableOperation {
+public interface FilterableOperation<Pojo> {
 
-    FilterableOperation where(Condition condition);
+    FilterableOperation where(Condition<Pojo> condition);
 }

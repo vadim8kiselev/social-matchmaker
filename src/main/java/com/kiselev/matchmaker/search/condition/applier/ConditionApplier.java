@@ -7,5 +7,5 @@ import java.util.List;
 @FunctionalInterface
 public interface ConditionApplier<Pojo> {
 
-    List<Pojo> apply(List<Pojo> data, Condition condition);
+    List<Pojo> apply(List<Pojo> data, Condition<Pojo> condition);
 }

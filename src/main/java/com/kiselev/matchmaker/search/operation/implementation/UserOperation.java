@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-public class UserOperation implements StatefulOperation<User>, FilterableOperation, RepeatableOperation<UserSearch>, PerformableOperation<User> {
+public class UserOperation implements StatefulOperation<User>, FilterableOperation<User>, RepeatableOperation<UserSearch>, PerformableOperation<User> {
 
     @Autowired
     private LoopFabric loopFabric;
@@ -34,7 +34,7 @@ public class UserOperation implements StatefulOperation<User>, FilterableOperati
         return this;
     }
 
-    public UserOperation where(Condition condition) {
+    public UserOperation where(Condition<User> condition) {
         return from(userConditionApplier.apply(users, condition));
     }
 
