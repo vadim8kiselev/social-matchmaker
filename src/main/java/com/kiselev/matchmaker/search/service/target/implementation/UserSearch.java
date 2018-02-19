@@ -5,7 +5,6 @@ import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
-import com.kiselev.matchmaker.search.cache.annotation.APIMethod;
 import com.kiselev.matchmaker.search.condition.SearchCondition;
 import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
 import com.kiselev.matchmaker.search.service.concept.GroupSearchConcept;
@@ -37,7 +36,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
     private List<User> users;
 
     @Override
-    @APIMethod
     public UserSearchConcept friends() {
         List<User> friends = users.stream()
                 .map(User::getId)
@@ -48,7 +46,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
     }
 
     @Override
-    @APIMethod
     public UserSearchConcept followers() {
         List<User> followers = users.stream()
                 .map(User::getId)
@@ -59,7 +56,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
     }
 
     @Override
-    @APIMethod
     public UserSearchConcept subscriptions() {
         List<User> subscriptions = users.stream()
                 .map(User::getId)
@@ -70,7 +66,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
     }
 
     @Override
-    @APIMethod
     public PostSearchConcept posts() {
         List<Post> posts = users.stream()
                 .map(User::getId)
@@ -81,7 +76,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
     }
 
     @Override
-    @APIMethod
     public GroupSearchConcept groups() {
         List<Group> groups = users.stream()
                 .map(User::getId)

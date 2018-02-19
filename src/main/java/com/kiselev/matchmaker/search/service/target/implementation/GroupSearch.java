@@ -5,7 +5,6 @@ import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
-import com.kiselev.matchmaker.search.cache.annotation.APIMethod;
 import com.kiselev.matchmaker.search.condition.SearchCondition;
 import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
 import com.kiselev.matchmaker.search.service.concept.GroupSearchConcept;
@@ -37,7 +36,6 @@ public class GroupSearch implements PassiveGeneralGroupSearch {
     private List<Group> groups;
 
     @Override
-    @APIMethod
     public UserSearchConcept subscribers() {
         List<User> subscribers = groups.stream()
                 .map(Group::getId)
@@ -48,7 +46,6 @@ public class GroupSearch implements PassiveGeneralGroupSearch {
     }
 
     @Override
-    @APIMethod
     public PostSearchConcept posts() {
         List<Post> posts = groups.stream()
                 .map(Group::getId)

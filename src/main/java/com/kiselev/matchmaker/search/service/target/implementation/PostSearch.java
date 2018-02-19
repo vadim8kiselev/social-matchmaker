@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
-import com.kiselev.matchmaker.search.cache.annotation.APIMethod;
 import com.kiselev.matchmaker.search.condition.SearchCondition;
 import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
 import com.kiselev.matchmaker.search.service.concept.PostSearchConcept;
@@ -33,7 +32,6 @@ public class PostSearch implements PassiveGeneralPostSearch {
     private List<Post> posts;
 
     @Override
-    @APIMethod
     public UserSearchConcept likes() {
         List<User> likes = posts.stream()
                 .map(post -> post.getOwnerId() + "_" + post.getId()) // TODO: Remove VK related functionality
@@ -44,7 +42,6 @@ public class PostSearch implements PassiveGeneralPostSearch {
     }
 
     @Override
-    @APIMethod
     public UserSearchConcept shares() {
         List<User> shares = posts.stream()
                 .map(post -> post.getOwnerId() + "_" + post.getId()) // TODO: VK related functionality
