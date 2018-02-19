@@ -1,11 +1,10 @@
 package com.kiselev.matchmaker.api;
 
-import com.kiselev.matchmaker.api.model.Group;
-import com.kiselev.matchmaker.api.model.Post;
-import com.kiselev.matchmaker.api.model.User;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Vadim Kiselev
@@ -31,11 +30,11 @@ public interface SocialNetworkAPI {
     /**
      * Post related methods
      */
-    List<Post> getPostsByPostsIds(Map<String, List<String>> postsIds);
+    List<Post> getPostsByPostsIds(List<String> postsIds);
 
-    List<User> getLikesByPostId(String ownerId, String postId);
+    List<User> getLikesByPostId(String postId);
 
-    List<User> getSharesByPostId(String ownerId, String postId);
+    List<User> getSharesByPostId(String postId);
 
     /**
      * Group related methods

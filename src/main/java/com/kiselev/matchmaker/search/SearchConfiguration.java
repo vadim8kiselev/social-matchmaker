@@ -1,87 +1,73 @@
 package com.kiselev.matchmaker.search;
 
-import com.kiselev.matchmaker.search.condition.applier.implementation.GroupConditionApplier;
-import com.kiselev.matchmaker.search.condition.applier.implementation.PostConditionApplier;
-import com.kiselev.matchmaker.search.condition.applier.implementation.UserConditionApplier;
-import com.kiselev.matchmaker.search.operation.implementation.GroupOperation;
-import com.kiselev.matchmaker.search.operation.implementation.PostOperation;
-import com.kiselev.matchmaker.search.operation.implementation.UserOperation;
-import com.kiselev.matchmaker.search.service.SearchService;
-import com.kiselev.matchmaker.search.service.implementation.GroupSearch;
-import com.kiselev.matchmaker.search.service.implementation.PostSearch;
-import com.kiselev.matchmaker.search.service.implementation.UserSearch;
-import com.kiselev.matchmaker.search.service.state.LoopFabric;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import com.kiselev.matchmaker.api.SocialNetworkAPI;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
+import com.kiselev.matchmaker.search.cache.SearchCacheConfiguration;
+import com.kiselev.matchmaker.search.condition.SearchConditionConfiguration;
+import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
+import com.kiselev.matchmaker.search.service.Search;
+import com.kiselev.matchmaker.search.service.target.FromSearch;
+import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralGroupSearch;
+import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralPostSearch;
+import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralUserSearch;
+import com.kiselev.matchmaker.search.service.target.implementation.GroupSearch;
+import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
+import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
+import org.springframework.context.annotation.*;
 
 /**
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
 @Configuration
+@Import({SearchCacheConfiguration.class, SearchConditionConfiguration.class})
 public class SearchConfiguration {
 
     @Bean
     @Scope(scopeName = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public Search search() {
-        return new SearchService();
+    public Search search(PassiveGeneralUserSearch userSearch, PassiveGeneralPostSearch postSearch, PassiveGeneralGroupSearch groupSearch) {
+        FromSearch search = new FromSearch();
+        search.setUserSearch(userSearch);
+        search.setPostSearch(postSearch);
+        search.setGroupSearch(groupSearch);
+
+        userSearch.setPostSearch(postSearch);
+        userSearch.setGroupSearch(groupSearch);
+
+        postSearch.setUserSearch(userSearch);
+
+        groupSearch.setUserSearch(userSearch);
+        groupSearch.setPostSearch(postSearch);
+
+        return search;
     }
 
     @Bean
     @Scope("prototype")
-    public UserSearch userSearch() {
-        return new UserSearch();
+    public UserSearch userSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<User> conditionApplier) {
+        UserSearch userSearch = new UserSearch();
+        userSearch.setSocialNetworkAPI(socialNetworkAPI);
+        userSearch.setUserConditionApplier(conditionApplier);
+        return userSearch;
     }
 
     @Bean
     @Scope("prototype")
-    public PostSearch postSearch() {
-        return new PostSearch();
+    public PostSearch postSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<Post> conditionApplier) {
+        PostSearch postSearch = new PostSearch();
+        postSearch.setSocialNetworkAPI(socialNetworkAPI);
+        postSearch.setPostConditionApplier(conditionApplier);
+        return postSearch;
     }
 
     @Bean
     @Scope("prototype")
-    public GroupSearch groupSearch() {
-        return new GroupSearch();
-    }
-
-    @Bean
-    @Scope("prototype")
-    public UserOperation userOperation() {
-        return new UserOperation();
-    }
-
-    @Bean
-    @Scope("prototype")
-    public PostOperation postOperation() {
-        return new PostOperation();
-    }
-
-    @Bean
-    @Scope("prototype")
-    public GroupOperation groupOperation() {
-        return new GroupOperation();
-    }
-
-    @Bean
-    public LoopFabric loopFabric() {
-        return new LoopFabric();
-    }
-
-    @Bean
-    public UserConditionApplier userConditionApplier() {
-        return new UserConditionApplier();
-    }
-
-    @Bean
-    public PostConditionApplier postConditionApplier() {
-        return new PostConditionApplier();
-    }
-
-    @Bean
-    public GroupConditionApplier groupConditionApplier() {
-        return new GroupConditionApplier();
+    public GroupSearch groupSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<Group> conditionApplier) {
+        GroupSearch groupSearch = new GroupSearch();
+        groupSearch.setSocialNetworkAPI(socialNetworkAPI);
+        groupSearch.setGroupConditionApplier(conditionApplier);
+        return groupSearch;
     }
 }

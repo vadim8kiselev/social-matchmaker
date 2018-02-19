@@ -1,9 +1,11 @@
 package com.kiselev.matchmaker.api.network.facebook.converter;
 
 import com.kiselev.matchmaker.api.EntityConverter;
-import com.kiselev.matchmaker.api.model.Group;
-import com.kiselev.matchmaker.api.model.Post;
-import com.kiselev.matchmaker.api.model.User;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
+
+import java.util.List;
 
 /**
  * @author: Vadim Kiselev
@@ -14,19 +16,31 @@ public class FacebookEntityConverter<ExternalUser, ExternalWallPost, ExternalGro
 
     @Override
     public User convertUser(ExternalUser externalEntity) {
-        return User.builder()
-                .build();
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
+
+    @Override
+    public List<User> convertUsers(List<ExternalUser> externalEntities) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
     @Override
     public Post convertPost(ExternalWallPost externalPost) {
-        return Post.builder()
-                .build();
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
+
+    @Override
+    public List<Post> convertPosts(List<ExternalWallPost> externalWallPosts) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
     @Override
     public Group convertGroup(ExternalGroup externalGroup) {
-        return Group.builder()
-                .build();
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
+    }
+
+    @Override
+    public List<Group> convertGroups(List<ExternalGroup> externalGroups) {
+        throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 }

@@ -1,11 +1,20 @@
 package com.kiselev.matchmaker.search.condition.applier;
 
-import com.kiselev.matchmaker.search.condition.Condition;
+import com.kiselev.matchmaker.api.model.Entity;
+import com.kiselev.matchmaker.search.condition.SearchCondition;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@FunctionalInterface
-public interface ConditionApplier<Pojo> {
+public class ConditionApplier<Pojo extends Entity> {
 
-    List<Pojo> apply(List<Pojo> data, Condition<Pojo> condition);
+    public List<Pojo> apply(List<Pojo> entities, SearchCondition condition) {
+        if (condition != null) {
+            return entities.stream()
+                    .filter(condition::isCompleted)
+                    .collect(Collectors.toList());
+        } else {
+            return entities;
+        }
+    }
 }

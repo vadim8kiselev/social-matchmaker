@@ -1,12 +1,11 @@
 package com.kiselev.matchmaker.api.network.facebook.implementation;
 
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
-import com.kiselev.matchmaker.api.model.Group;
-import com.kiselev.matchmaker.api.model.Post;
-import com.kiselev.matchmaker.api.model.User;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: Vadim Kiselev
@@ -45,17 +44,17 @@ public class FacebookAPI implements SocialNetworkAPI {
     }
 
     @Override
-    public List<Post> getPostsByPostsIds(Map<String, List<String>> postsIds) {
+    public List<Post> getPostsByPostsIds(List<String> postsIds) {
         throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
     @Override
-    public List<User> getLikesByPostId(String ownerId, String postId) {
+    public List<User> getLikesByPostId(String postId) {
         throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 
     @Override
-    public List<User> getSharesByPostId(String ownerId, String postId) {
+    public List<User> getSharesByPostId(String postId) {
         throw new UnsupportedOperationException("Facebook API is not implemented yet.");
     }
 

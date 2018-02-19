@@ -2,19 +2,17 @@ package com.kiselev.matchmaker.api.network.vk.converter;
 
 import com.google.common.collect.Lists;
 import com.kiselev.matchmaker.api.EntityConverter;
-import com.kiselev.matchmaker.api.model.Group;
-import com.kiselev.matchmaker.api.model.Post;
-import com.kiselev.matchmaker.api.model.User;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
+import com.vk.api.sdk.objects.base.Geo;
+import com.vk.api.sdk.objects.base.Place;
 import com.vk.api.sdk.objects.groups.ContactsItem;
 import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.groups.LinksItem;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.polls.Answer;
-import com.vk.api.sdk.objects.users.Career;
-import com.vk.api.sdk.objects.users.Military;
-import com.vk.api.sdk.objects.users.School;
-import com.vk.api.sdk.objects.users.University;
-import com.vk.api.sdk.objects.users.UserFull;
+import com.vk.api.sdk.objects.users.*;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.WallpostFull;
@@ -31,67 +29,74 @@ import java.util.stream.Collectors;
 public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull, GroupFull> {
 
     @Override
-    public User convertUser(UserFull externalEntity) {
+    public User convertUser(UserFull externalUser) {
         return User.builder()
-                .id(externalEntity.getId().toString())
-                .firstName(externalEntity.getFirstName())
-                .lastName(externalEntity.getLastName())
-                .screenName(nonNull(externalEntity.getScreenName()))
-                .sex(nonNull(externalEntity.getSex()))
-                .birthday(nonNull(externalEntity.getBdate()))
-                .online(String.valueOf(externalEntity.isOnline() || externalEntity.isOnlineMobile()))
-                .photoLink(externalEntity.getPhotoMaxOrig())
+                .id(externalUser.getId().toString())
+                .firstName(externalUser.getFirstName())
+                .lastName(externalUser.getLastName())
+                .screenName(nonNull(externalUser.getScreenName()))
+                .sex(nonNull(externalUser.getSex()))
+                .birthday(nonNull(externalUser.getBdate()))
+                .online(String.valueOf(externalUser.isOnline() || externalUser.isOnlineMobile()))
+                .photoLink(externalUser.getPhotoMaxOrig())
 
-                .city(externalEntity.getCity() != null ? externalEntity.getCity().getTitle() : "")
-                .homeTown(nonNull(externalEntity.getHomeTown()))
-                .country(externalEntity.getCountry() != null ? externalEntity.getCountry().getTitle() : "")
+                .city(externalUser.getCity() != null ? externalUser.getCity().getTitle() : "")
+                .homeTown(nonNull(externalUser.getHomeTown()))
+                .country(externalUser.getCountry() != null ? externalUser.getCountry().getTitle() : "")
 
-                .mobilePhone(nonNull(externalEntity.getMobilePhone()))
-                .homePhone(nonNull(externalEntity.getHomePhone()))
+                .mobilePhone(nonNull(externalUser.getMobilePhone()))
+                .homePhone(nonNull(externalUser.getHomePhone()))
 
-                .skype(nonNull(externalEntity.getSkype()))
-                .facebook(nonNull(externalEntity.getFacebook()))
-                .twitter(nonNull(externalEntity.getTwitter()))
-                .livejournal(nonNull(externalEntity.getLivejournal()))
-                .instagram(nonNull(externalEntity.getInstagram()))
+                .skype(nonNull(externalUser.getSkype()))
+                .facebook(nonNull(externalUser.getFacebook()))
+                .twitter(nonNull(externalUser.getTwitter()))
+                .livejournal(nonNull(externalUser.getLivejournal()))
+                .instagram(nonNull(externalUser.getInstagram()))
 
-                .status(nonNull(externalEntity.getStatus()))
-                .activity(nonNull(externalEntity.getActivity()))
-                .lastSeen(externalEntity.getLastSeen() != null
-                        ? new Date(externalEntity.getLastSeen().getTime() * 1000L).toString()
+                .status(nonNull(externalUser.getStatus()))
+                .activity(nonNull(externalUser.getActivity()))
+                .lastSeen(externalUser.getLastSeen() != null
+                        ? new Date(externalUser.getLastSeen().getTime() * 1000L).toString()
                         : "")
 
-                .career(listToString(nonNull(externalEntity.getCareer())))
-                .military(listToString(nonNull(externalEntity.getMilitary())))
-                .university(listToString(nonNull(externalEntity.getUniversities())))
-                .schools(listToString(nonNull(externalEntity.getSchools())))
+                .career(listToString(nonNull(externalUser.getCareer())))
+                .military(listToString(nonNull(externalUser.getMilitary())))
+                .university(listToString(nonNull(externalUser.getUniversities())))
+                .schools(listToString(nonNull(externalUser.getSchools())))
 
-                .relation(nonNull(externalEntity.getRelation()))
-                .relationPartner(externalEntity.getRelationPartner() != null
-                        ? externalEntity.getRelationPartner().getFirstName() + " " + externalEntity.getRelationPartner().getLastName()
+                .relation(nonNull(externalUser.getRelation()))
+                .relationPartner(externalUser.getRelationPartner() != null
+                        ? externalUser.getRelationPartner().getFirstName() + " " + externalUser.getRelationPartner().getLastName()
                         : "")
 
-                .interests(nonNull(externalEntity.getInterests()))
-                .music(nonNull(externalEntity.getMusic()))
-                .activities(nonNull(externalEntity.getActivities()))
-                .movies(nonNull(externalEntity.getMovies()))
-                .tv(nonNull(externalEntity.getTv()))
-                .books(nonNull(externalEntity.getBooks()))
-                .games(nonNull(externalEntity.getGames()))
-                .about(nonNull(externalEntity.getAbout()))
-                .quotes(nonNull(externalEntity.getQuotes()))
+                .interests(nonNull(externalUser.getInterests()))
+                .music(nonNull(externalUser.getMusic()))
+                .activities(nonNull(externalUser.getActivities()))
+                .movies(nonNull(externalUser.getMovies()))
+                .tv(nonNull(externalUser.getTv()))
+                .books(nonNull(externalUser.getBooks()))
+                .games(nonNull(externalUser.getGames()))
+                .about(nonNull(externalUser.getAbout()))
+                .quotes(nonNull(externalUser.getQuotes()))
 
-                .political(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getPolitical()) : "")
-                .languages(externalEntity.getPersonal() != null ? listToString(nonNull(externalEntity.getPersonal().getLangs())) : "")
-                .religion(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getReligion()) : "")
-                .inspiredBy(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getInspiredBy()) : "")
-                .peopleMain(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getPeopleMain()) : "")
-                .lifeMain(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getLifeMain()) : "")
-                .smoking(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getSmoking()) : "")
-                .alcohol(externalEntity.getPersonal() != null ? nonNull(externalEntity.getPersonal().getAlcohol()) : "")
+                .political(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getPolitical()) : "")
+                .languages(externalUser.getPersonal() != null ? listToString(nonNull(externalUser.getPersonal().getLangs())) : "")
+                .religion(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getReligion()) : "")
+                .inspiredBy(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getInspiredBy()) : "")
+                .peopleMain(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getPeopleMain()) : "")
+                .lifeMain(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getLifeMain()) : "")
+                .smoking(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getSmoking()) : "")
+                .alcohol(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getAlcohol()) : "")
 
-                .deactivated(nonNull(externalEntity.getDeactivated()))
+                .deactivated(nonNull(externalUser.getDeactivated()))
                 .build();
+    }
+
+    @Override
+    public List<User> convertUsers(List<UserFull> externalUsers) {
+        return externalUsers.stream()
+                .map(this::convertUser)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -110,11 +115,18 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .viewsCount(externalPost.getViews() != null ? externalPost.getViews().getCount().toString() : "")
                 .commentsCount(externalPost.getComments() != null ? externalPost.getComments().getCount().toString() : "")
 
-                .geo(nonNull(externalPost.getGeo()))
+                .geo(entityToString(externalPost.getGeo()))
                 .type(externalPost.getPostType().getValue())
                 .attachments(listToString(nonNull(externalPost.getAttachments())))
                 .platform(nonNull(externalPost.getPostSource().getPlatform()))
                 .build();
+    }
+
+    @Override
+    public List<Post> convertPosts(List<WallpostFull> externalPosts) {
+        return externalPosts.stream()
+                .map(this::convertPost)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -145,6 +157,13 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .build();
     }
 
+    @Override
+    public List<Group> convertGroups(List<GroupFull> externalGroups) {
+        return externalGroups.stream()
+                .map(this::convertGroup)
+                .collect(Collectors.toList());
+    }
+
     private String nonNull(String data) {
         return data != null ? data : "";
     }
@@ -163,28 +182,32 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
 
     private <ExternalPojo> String listToString(List<ExternalPojo> data) {
         return String.join("; ", data.stream()
-                .map(this::pojoToString)
+                .map(this::entityToString)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList()));
     }
 
-    private String pojoToString(Object pojo) {
-        if (pojo instanceof Career) {
-            return careerToString((Career) pojo);
-        } else if (pojo instanceof Military) {
-            return militaryToString((Military) pojo);
-        } else if (pojo instanceof University) {
-            return universityToString((University) pojo);
-        } else if (pojo instanceof School) {
-            return schoolToString((School) pojo);
-        } else if (pojo instanceof WallpostAttachment) {
-            return postAttachmentToString((WallpostAttachment) pojo);
-        } else if (pojo instanceof LinksItem) {
-            return linkToString((LinksItem) pojo);
-        } else if (pojo instanceof ContactsItem) {
-            return contactToString((ContactsItem) pojo);
+    private <ExternalPojo> String entityToString(ExternalPojo entity) {
+        if (entity instanceof Career) {
+            return careerToString((Career) entity);
+        } else if (entity instanceof Military) {
+            return militaryToString((Military) entity);
+        } else if (entity instanceof University) {
+            return universityToString((University) entity);
+        } else if (entity instanceof School) {
+            return schoolToString((School) entity);
+        } else if (entity instanceof WallpostAttachment) {
+            return postAttachmentToString((WallpostAttachment) entity);
+        } else if (entity instanceof LinksItem) {
+            return linkToString((LinksItem) entity);
+        } else if (entity instanceof ContactsItem) {
+            return contactToString((ContactsItem) entity);
+        } else if (entity instanceof Geo) {
+            return geoToString((Geo) entity);
+        } else if (entity != null) {
+            return entity.toString();
         } else {
-            return pojo.toString();
+            return "";
         }
     }
 
@@ -295,7 +318,7 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 attachment = postAttachment.getGraffiti().getPhoto586();
                 break;
             case PHOTOS_LIST:
-                attachment = String.join(", ", postAttachment.getPhotosList());
+                attachment = String.join(", ", nonNull(postAttachment.getPhotosList()));
                 break;
             case POSTED_PHOTO:
                 attachment = postAttachment.getPostedPhoto().getPhoto604();
@@ -336,5 +359,13 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
             return photo.getPhoto130();
         }
         return nonNull(photo.getPhoto75());
+    }
+
+    private String geoToString(Geo geo) {
+        String type = geo.getType() + ", ";
+        String coordinates = geo.getCoordinates();
+
+        Place place = geo.getPlace();
+        return type + coordinates + (place != null ? "(" + place.getTitle() + ")" : "");
     }
 }

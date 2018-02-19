@@ -1,10 +1,9 @@
 package com.kiselev.matchmaker.rest;
 
-import com.google.common.collect.Lists;
-import com.kiselev.matchmaker.api.model.Group;
-import com.kiselev.matchmaker.api.model.Post;
-import com.kiselev.matchmaker.api.model.User;
-import com.kiselev.matchmaker.search.Search;
+import com.kiselev.matchmaker.api.model.entity.Group;
+import com.kiselev.matchmaker.api.model.entity.Post;
+import com.kiselev.matchmaker.api.model.entity.User;
+import com.kiselev.matchmaker.search.service.Search;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -66,9 +65,10 @@ public class OutputController {
     }
 
     @RequestMapping(path = "/posts", method = RequestMethod.GET)
-    public List<Post> posts() {
+    public List<User> posts() {
         return search
-                .fromPosts(Lists.newArrayList("42597474_4424", "42597474_4426", "280512823_193", "177079109_326", "177079109_329"))
+                .fromPosts("42597474_4424", "42597474_4426", "280512823_193", "177079109_326", "177079109_329")
+                .likes()
                 .perform();
     }
 
