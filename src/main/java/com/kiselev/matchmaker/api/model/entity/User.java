@@ -1,16 +1,21 @@
 package com.kiselev.matchmaker.api.model.entity;
 
-import com.kiselev.matchmaker.api.model.Entity;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * @author: Vadim Kiselev
- * @date: 24.01.2018
+ * @date: 09.02.2018
  */
-@Builder
 @Getter
-public class User implements Entity {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class User extends AbstractEntity {
     private String id;
     private String firstName;
     private String lastName;
@@ -30,7 +35,6 @@ public class User implements Entity {
     private String instagram;
 
     private String status;
-    private String activity;
     private String lastSeen;
 
     private String career;

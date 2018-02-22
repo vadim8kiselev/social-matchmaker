@@ -8,7 +8,7 @@ import com.kiselev.matchmaker.search.service.concept.UserSearchConcept;
 import com.kiselev.matchmaker.search.service.target.general.GeneralGroupSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -16,47 +16,43 @@ import java.util.List;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Setter
 public class FromSearch implements Search {
 
+    @Autowired
     private UserSearchConcept userSearch;
 
+    @Autowired
     private PostSearchConcept postSearch;
 
+    @Autowired
     private GroupSearchConcept groupSearch;
 
+    @Override
     public GeneralUserSearch fromUser(String userId) {
         return userSearch.from(Lists.newArrayList(userId));
     }
 
-    public GeneralUserSearch fromUsers(String... userIds) {
-        return userSearch.from(Lists.newArrayList(userIds));
-    }
-
+    @Override
     public GeneralUserSearch fromUsers(List<String> userIds) {
         return userSearch.from(Lists.newArrayList(userIds));
     }
 
+    @Override
     public GeneralPostSearch fromPost(String postId) {
         return postSearch.from(Lists.newArrayList(postId));
     }
 
-    public GeneralPostSearch fromPosts(String... postIds) {
-        return postSearch.from(Lists.newArrayList(postIds));
-    }
-
+    @Override
     public GeneralPostSearch fromPosts(List<String> postIds) {
         return postSearch.from(Lists.newArrayList(postIds));
     }
 
+    @Override
     public GeneralGroupSearch fromGroup(String groupId) {
         return groupSearch.from(Lists.newArrayList(groupId));
     }
 
-    public GeneralGroupSearch fromGroups(String... groupIds) {
-        return groupSearch.from(Lists.newArrayList(groupIds));
-    }
-
+    @Override
     public GeneralGroupSearch fromGroups(List<String> groupIds) {
         return groupSearch.from(Lists.newArrayList(groupIds));
     }

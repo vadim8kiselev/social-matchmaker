@@ -12,10 +12,15 @@ import com.vk.api.sdk.objects.groups.GroupFull;
 import com.vk.api.sdk.objects.groups.LinksItem;
 import com.vk.api.sdk.objects.photos.Photo;
 import com.vk.api.sdk.objects.polls.Answer;
-import com.vk.api.sdk.objects.users.*;
+import com.vk.api.sdk.objects.users.Career;
+import com.vk.api.sdk.objects.users.Military;
+import com.vk.api.sdk.objects.users.School;
+import com.vk.api.sdk.objects.users.University;
+import com.vk.api.sdk.objects.users.UserFull;
 import com.vk.api.sdk.objects.wall.WallpostAttachment;
 import com.vk.api.sdk.objects.wall.WallpostAttachmentType;
 import com.vk.api.sdk.objects.wall.WallpostFull;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -54,7 +59,6 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .instagram(nonNull(externalUser.getInstagram()))
 
                 .status(nonNull(externalUser.getStatus()))
-                .activity(nonNull(externalUser.getActivity()))
                 .lastSeen(externalUser.getLastSeen() != null
                         ? new Date(externalUser.getLastSeen().getTime() * 1000L).toString()
                         : "")
@@ -64,7 +68,7 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .university(listToString(nonNull(externalUser.getUniversities())))
                 .schools(listToString(nonNull(externalUser.getSchools())))
 
-                .relation(nonNull(externalUser.getRelation()))
+                .relation(VKPropertyMapper.getRelation(nonNull(externalUser.getRelation())))
                 .relationPartner(externalUser.getRelationPartner() != null
                         ? externalUser.getRelationPartner().getFirstName() + " " + externalUser.getRelationPartner().getLastName()
                         : "")
@@ -79,14 +83,14 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .about(nonNull(externalUser.getAbout()))
                 .quotes(nonNull(externalUser.getQuotes()))
 
-                .political(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getPolitical()) : "")
+                .political(externalUser.getPersonal() != null ? VKPropertyMapper.getPoliticalViews(nonNull(externalUser.getPersonal().getPolitical())) : "")
                 .languages(externalUser.getPersonal() != null ? listToString(nonNull(externalUser.getPersonal().getLangs())) : "")
                 .religion(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getReligion()) : "")
                 .inspiredBy(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getInspiredBy()) : "")
-                .peopleMain(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getPeopleMain()) : "")
-                .lifeMain(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getLifeMain()) : "")
-                .smoking(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getSmoking()) : "")
-                .alcohol(externalUser.getPersonal() != null ? nonNull(externalUser.getPersonal().getAlcohol()) : "")
+                .peopleMain(externalUser.getPersonal() != null ? VKPropertyMapper.getImportantInOthers(nonNull(externalUser.getPersonal().getPeopleMain())) : "")
+                .lifeMain(externalUser.getPersonal() != null ? VKPropertyMapper.getPersonalPriority(nonNull(externalUser.getPersonal().getLifeMain())) : "")
+                .smoking(externalUser.getPersonal() != null ? VKPropertyMapper.getSmokingAndAlcohol(nonNull(externalUser.getPersonal().getSmoking())) : "")
+                .alcohol(externalUser.getPersonal() != null ? VKPropertyMapper.getSmokingAndAlcohol(nonNull(externalUser.getPersonal().getAlcohol())) : "")
 
                 .deactivated(nonNull(externalUser.getDeactivated()))
                 .build();
@@ -102,7 +106,7 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
     @Override
     public Post convertPost(WallpostFull externalPost) {
         return Post.builder()
-                .id(externalPost.getId().toString())
+                .id(externalPost.getOwnerId().toString() + "_" + externalPost.getId().toString())
                 .fromId(externalPost.getFromId().toString())
                 .ownerId(externalPost.getOwnerId().toString())
                 .date(externalPost.getDate() != null
@@ -212,54 +216,45 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
     }
 
     private String careerToString(Career career) {
-        if (career.getCompany() != null) {
-            String company = career.getCompany() + ", ";
-            String position = career.getPosition() != null ? career.getPosition() + ", " : "";
+        String company = StringUtils.isNotEmpty(career.getCompany()) ? career.getCompany() : "";
+        String position = StringUtils.isNotEmpty(career.getPosition()) ? ", " + career.getPosition() : "";
 
-            Integer from = career.getFrom();
-            Integer until = career.getUntil();
-            String date = from != null
-                    ? "(" + from + " - " + (until != null ? until : "Till now") + ")"
-                    : "";
+        Integer from = career.getFrom();
+        Integer until = career.getUntil();
+        String date = from != null
+                ? "(" + from + " - " + (until != null ? until : "Till now") + ")"
+                : "";
 
-            return company + position + date;
-        }
-        return null;
+        return company + position + date;
     }
 
     private String militaryToString(Military military) {
-        if (military.getUnit() != null) {
-            String name = military.getUnit() + " ";
+        String name = StringUtils.isNotEmpty(military.getUnit()) ? military.getUnit() : "";
 
-            Integer from = military.getFrom();
-            Integer until = military.getUntil();
-            String date = from != null
-                    ? "(" + from + " - " + (until != null ? until : "Till now") + ")"
-                    : "";
+        Integer from = military.getFrom();
+        Integer until = military.getUntil();
+        String date = from != null
+                ? "(" + from + " - " + (until != null ? until : "Till now") + ")"
+                : "";
 
-            return name + date;
-        }
-        return null;
+        return name + date;
     }
 
     private String universityToString(University university) {
-        if (university.getName() != null) {
-            String name = university.getName() + ", ";
-            String faculty = university.getFacultyName() != null ? university.getFacultyName() + ", " : "";
-            String chair = university.getChairName() != null ? university.getChairName() + ", " : "";
-            String educationStatus = university.getEducationStatus() != null ? university.getEducationStatus() + ", " : "";
-            String educationForm = university.getEducationForm() != null ? university.getEducationForm() + ", " : "";
-            String date = university.getGraduation() != null ? "#" + university.getGraduation().toString() : "";
+        String name = StringUtils.isNotEmpty(university.getName()) ? university.getName() : "";
+        String faculty = StringUtils.isNotEmpty(university.getFacultyName()) ? ", " + university.getFacultyName() : "";
+        String chair = StringUtils.isNotEmpty(university.getChairName()) ? ", " + university.getChairName() : "";
+        String educationStatus = StringUtils.isNotEmpty(university.getEducationStatus()) ? ", " + university.getEducationStatus() : "";
+        String educationForm = StringUtils.isNotEmpty(university.getEducationForm()) ? ", " + university.getEducationForm() : "";
+        String date = university.getGraduation() != null ? ", #" + university.getGraduation().toString() : "";
 
-            return name + faculty + chair + educationStatus + educationForm + date;
-        }
-        return null;
+        return name + faculty + chair + educationStatus + educationForm + date;
     }
 
     private String schoolToString(School school) {
         if (school.getName() != null) {
-            String name = school.getName() + ", ";
-            String type = school.getTypeStr() != null ? school.getTypeStr() + ", " : "";
+            String name = StringUtils.isNotEmpty(school.getName()) ? school.getName() + ", " : "";
+            String type = StringUtils.isNotEmpty(school.getTypeStr()) ? school.getTypeStr() : "";
 
             Integer from = school.getYearFrom();
             Integer to = school.getYearTo() != null
@@ -328,7 +323,7 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 break;
         }
 
-        return type.name() + " - " + attachment;
+        return type.name() + ": " + attachment;
     }
 
     private String linkToString(LinksItem link) {

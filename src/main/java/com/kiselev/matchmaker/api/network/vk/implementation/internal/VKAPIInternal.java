@@ -33,6 +33,7 @@ import com.vk.api.sdk.queries.users.UsersGetSubscriptionsQuery;
 import com.vk.api.sdk.queries.wall.WallGetQuery;
 import com.vk.api.sdk.queries.wall.WallGetRepostsQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -55,6 +56,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getUsersByUsersIds(List<String> usersIds) {
         List<List<String>> lists = Lists.partition(usersIds, MaxCount.USERS_GET);
         return lists.stream()
@@ -78,6 +80,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getFriendsByUserId(String userId) {
         try {
             List<UserFull> friends = Lists.newArrayList();
@@ -104,6 +107,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getFollowersByUserId(String userId) {
         try {
             UsersGetFollowersQueryWithFields query = vk.users()
@@ -131,6 +135,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getSubscriptionsByUserId(String userId) {
         try {
             UsersGetSubscriptionsQuery query = vk.users()
@@ -159,11 +164,13 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("posts")
     public List<Post> getPostsByUserId(String userId) {
         return getPostsByOwnerId(userId);
     }
 
     @Override
+    @Cacheable("groups")
     public List<Group> getGroupsByUserId(String userId) {
         try {
             GroupsGetQuery query = vk.groups().get(user)
@@ -191,6 +198,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("posts")
     public List<Post> getPostsByPostsIds(List<String> postsIds) {
         return Lists.partition(postsIds, MaxCount.WALL_GET_BY_ID).stream()
                 .map(posts -> {
@@ -209,6 +217,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getLikesByPostId(String postId) {
         try {
             String[] ownerId_postId = postId.split("_");
@@ -238,6 +247,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getSharesByPostId(String postId) {
         try {
             String[] ownerId_postId = postId.split("_");
@@ -272,14 +282,15 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("groups")
     public List<Group> getGroupsByGroupsIds(List<String> groupsIds) {
         return Lists.partition(groupsIds, MaxCount.GROUPS_GET_BY_ID).stream()
-                .map(likes -> {
+                .map(groups -> {
                     try {
                         VKUtils.timeout();
                         return converter.convertGroups(vk.groups().getById(user)
                                 .fields(GroupField.values())
-                                .groupIds(groupsIds)
+                                .groupIds(groups)
                                 .execute());
                     } catch (ApiException | ClientException exception) {
                         ExceptionHandler.handleException(exception);
@@ -291,6 +302,7 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("users")
     public List<User> getSubscribersByGroupId(String groupId) {
         try {
             GroupsGetMembersQuery query = vk.groups().getMembers(user)
@@ -317,11 +329,13 @@ public class VKAPIInternal implements SocialNetworkAPIInternal {
     }
 
     @Override
+    @Cacheable("posts")
     public List<Post> getPostsByGroupId(String groupId) {
         return getPostsByOwnerId(groupId);
     }
 
     @Override
+    @Cacheable("posts")
     public List<Post> getPostsByOwnerId(String ownerId) {
         try {
             WallGetQuery query = vk.wall().get(user)

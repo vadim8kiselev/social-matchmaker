@@ -1,16 +1,21 @@
 package com.kiselev.matchmaker.api.model.entity;
 
-import com.kiselev.matchmaker.api.model.Entity;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 /**
  * @author: Vadim Kiselev
  * @date: 09.02.2018
  */
-@Builder
 @Getter
-public class Post implements Entity {
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public class Post extends AbstractEntity {
     private String id;
     private String fromId;
     private String ownerId;

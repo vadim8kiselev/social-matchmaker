@@ -1,6 +1,9 @@
 package com.kiselev.matchmaker.search.service.target.implementation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
@@ -11,9 +14,9 @@ import com.kiselev.matchmaker.search.service.concept.GroupSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.PostSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.UserSearchConcept;
 import com.kiselev.matchmaker.search.service.contract.UserSearchContract;
+import com.kiselev.matchmaker.search.service.target.factory.SearchFactory;
 import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralUserSearch;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,17 +25,19 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Setter
-public class UserSearch implements PassiveGeneralUserSearch {
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+public class UserSearch implements GeneralUserSearch {
 
+    @Autowired
     private SocialNetworkAPI socialNetworkAPI;
 
+    @Autowired
     private ConditionApplier<User> userConditionApplier;
 
-    private PostSearchConcept postSearch;
+    @Autowired
+    private SearchFactory searchFactory;
 
-    private GroupSearchConcept groupSearch;
-
+    @JsonProperty
     private List<User> users;
 
     @Override
@@ -72,7 +77,7 @@ public class UserSearch implements PassiveGeneralUserSearch {
                 .map(socialNetworkAPI::getPostsByUserId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return postSearch.fromEntities(posts);
+        return searchFactory.postSearch().fromEntities(posts);
     }
 
     @Override
@@ -82,7 +87,7 @@ public class UserSearch implements PassiveGeneralUserSearch {
                 .map(socialNetworkAPI::getGroupsByUserId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return groupSearch.fromEntities(groups);
+        return searchFactory.groupSearch().fromEntities(groups);
     }
 
     @Override
@@ -109,6 +114,6 @@ public class UserSearch implements PassiveGeneralUserSearch {
 
     @Override
     public List<User> perform() {
-        return users;
+        return Lists.newArrayList(Sets.newLinkedHashSet(users));
     }
 }

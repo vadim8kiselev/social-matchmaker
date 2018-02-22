@@ -1,73 +1,53 @@
 package com.kiselev.matchmaker.search;
 
-import com.kiselev.matchmaker.api.SocialNetworkAPI;
-import com.kiselev.matchmaker.api.model.entity.Group;
-import com.kiselev.matchmaker.api.model.entity.Post;
-import com.kiselev.matchmaker.api.model.entity.User;
-import com.kiselev.matchmaker.search.cache.SearchCacheConfiguration;
 import com.kiselev.matchmaker.search.condition.SearchConditionConfiguration;
-import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
 import com.kiselev.matchmaker.search.service.Search;
 import com.kiselev.matchmaker.search.service.target.FromSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralGroupSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralPostSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralUserSearch;
+import com.kiselev.matchmaker.search.service.target.factory.SearchFactory;
 import com.kiselev.matchmaker.search.service.target.implementation.GroupSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 
 /**
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
 @Configuration
-@Import({SearchCacheConfiguration.class, SearchConditionConfiguration.class})
+@Import({SearchConditionConfiguration.class})
 public class SearchConfiguration {
 
     @Bean
     @Scope(scopeName = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public Search search(PassiveGeneralUserSearch userSearch, PassiveGeneralPostSearch postSearch, PassiveGeneralGroupSearch groupSearch) {
-        FromSearch search = new FromSearch();
-        search.setUserSearch(userSearch);
-        search.setPostSearch(postSearch);
-        search.setGroupSearch(groupSearch);
+    public Search search() {
+        return new FromSearch();
+    }
 
-        userSearch.setPostSearch(postSearch);
-        userSearch.setGroupSearch(groupSearch);
-
-        postSearch.setUserSearch(userSearch);
-
-        groupSearch.setUserSearch(userSearch);
-        groupSearch.setPostSearch(postSearch);
-
-        return search;
+    @Bean
+    @Scope(scopeName = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public SearchFactory searchFactory() {
+        return new SearchFactory();
     }
 
     @Bean
     @Scope("prototype")
-    public UserSearch userSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<User> conditionApplier) {
-        UserSearch userSearch = new UserSearch();
-        userSearch.setSocialNetworkAPI(socialNetworkAPI);
-        userSearch.setUserConditionApplier(conditionApplier);
-        return userSearch;
+    public UserSearch userSearch() {
+        return new UserSearch();
     }
 
     @Bean
     @Scope("prototype")
-    public PostSearch postSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<Post> conditionApplier) {
-        PostSearch postSearch = new PostSearch();
-        postSearch.setSocialNetworkAPI(socialNetworkAPI);
-        postSearch.setPostConditionApplier(conditionApplier);
-        return postSearch;
+    public PostSearch postSearch() {
+        return new PostSearch();
     }
 
     @Bean
     @Scope("prototype")
-    public GroupSearch groupSearch(SocialNetworkAPI socialNetworkAPI, ConditionApplier<Group> conditionApplier) {
-        GroupSearch groupSearch = new GroupSearch();
-        groupSearch.setSocialNetworkAPI(socialNetworkAPI);
-        groupSearch.setGroupConditionApplier(conditionApplier);
-        return groupSearch;
+    public GroupSearch groupSearch() {
+        return new GroupSearch();
     }
 }

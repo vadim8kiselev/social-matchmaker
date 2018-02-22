@@ -23,7 +23,6 @@ public enum UserMapper implements Mapper {
     INSTAGRAM("instagram"),
 
     STATUS("status"),
-    ACTIVITY("activity"),
     LAST_SEEN("lastSeen"),
 
     CAREER("career"),

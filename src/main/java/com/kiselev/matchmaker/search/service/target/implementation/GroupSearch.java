@@ -1,6 +1,9 @@
 package com.kiselev.matchmaker.search.service.target.implementation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
@@ -11,9 +14,9 @@ import com.kiselev.matchmaker.search.service.concept.GroupSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.PostSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.UserSearchConcept;
 import com.kiselev.matchmaker.search.service.contract.GroupSearchContract;
+import com.kiselev.matchmaker.search.service.target.factory.SearchFactory;
 import com.kiselev.matchmaker.search.service.target.general.GeneralGroupSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralGroupSearch;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,17 +25,20 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Setter
-public class GroupSearch implements PassiveGeneralGroupSearch {
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+public class GroupSearch implements GeneralGroupSearch {
+
+    @Autowired
     private SocialNetworkAPI socialNetworkAPI;
 
+    @Autowired
     private ConditionApplier<Group> groupConditionApplier;
 
-    private UserSearchConcept userSearch;
+    @Autowired
+    private SearchFactory searchFactory;
 
-    private PostSearchConcept postSearch;
-
+    @JsonProperty
     private List<Group> groups;
 
     @Override
@@ -42,7 +48,7 @@ public class GroupSearch implements PassiveGeneralGroupSearch {
                 .map(socialNetworkAPI::getSubscribersByGroupId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return userSearch.fromEntities(subscribers);
+        return searchFactory.userSearch().fromEntities(subscribers);
     }
 
     @Override
@@ -52,7 +58,7 @@ public class GroupSearch implements PassiveGeneralGroupSearch {
                 .map(socialNetworkAPI::getPostsByGroupId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return postSearch.fromEntities(posts);
+        return searchFactory.postSearch().fromEntities(posts);
     }
 
     @Override
@@ -79,6 +85,6 @@ public class GroupSearch implements PassiveGeneralGroupSearch {
 
     @Override
     public List<Group> perform() {
-        return groups;
+        return Lists.newArrayList(Sets.newLinkedHashSet(groups));
     }
 }

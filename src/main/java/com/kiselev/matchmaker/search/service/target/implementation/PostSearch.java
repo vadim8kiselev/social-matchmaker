@@ -1,6 +1,9 @@
 package com.kiselev.matchmaker.search.service.target.implementation;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.kiselev.matchmaker.api.SocialNetworkAPI;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
@@ -9,9 +12,9 @@ import com.kiselev.matchmaker.search.condition.applier.ConditionApplier;
 import com.kiselev.matchmaker.search.service.concept.PostSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.UserSearchConcept;
 import com.kiselev.matchmaker.search.service.contract.PostSearchContract;
+import com.kiselev.matchmaker.search.service.target.factory.SearchFactory;
 import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
-import com.kiselev.matchmaker.search.service.target.general.passive.PassiveGeneralPostSearch;
-import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,35 +23,40 @@ import java.util.stream.Collectors;
  * @author: Vadim Kiselev
  * @date: 24.01.2018
  */
-@Setter
-public class PostSearch implements PassiveGeneralPostSearch {
 
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
+public class PostSearch implements GeneralPostSearch {
+
+    @Autowired
     private SocialNetworkAPI socialNetworkAPI;
 
+    @Autowired
     private ConditionApplier<Post> postConditionApplier;
 
-    private UserSearchConcept userSearch;
+    @Autowired
+    private SearchFactory searchFactory;
 
+    @JsonProperty
     private List<Post> posts;
 
     @Override
     public UserSearchConcept likes() {
         List<User> likes = posts.stream()
-                .map(post -> post.getOwnerId() + "_" + post.getId()) // TODO: Remove VK related functionality
+                .map(Post::getId)
                 .map(socialNetworkAPI::getLikesByPostId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return userSearch.fromEntities(likes);
+        return searchFactory.userSearch().fromEntities(likes);
     }
 
     @Override
     public UserSearchConcept shares() {
         List<User> shares = posts.stream()
-                .map(post -> post.getOwnerId() + "_" + post.getId()) // TODO: VK related functionality
+                .map(Post::getId)
                 .map(socialNetworkAPI::getSharesByPostId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return userSearch.fromEntities(shares);
+        return searchFactory.userSearch().fromEntities(shares);
     }
 
     @Override
@@ -75,6 +83,6 @@ public class PostSearch implements PassiveGeneralPostSearch {
 
     @Override
     public List<Post> perform() {
-        return posts;
+        return Lists.newArrayList(Sets.newLinkedHashSet(posts));
     }
 }
