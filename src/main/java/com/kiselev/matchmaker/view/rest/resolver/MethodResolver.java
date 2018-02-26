@@ -19,28 +19,30 @@ import java.util.stream.Collectors;
 public class MethodResolver {
 
     private static final Map<String, String> colors = Maps.newHashMap();
+
     private static final Map<String, String> endpoints = Maps.newHashMap();
+
     private static final Map<String, String> prettifyMethodsNames = Maps.newHashMap();
 
     static {
-        colors.put("fromUser", "#efefef");
-        colors.put("fromUsers", "#efefef");
-        colors.put("fromPost", "#efefef");
-        colors.put("fromPosts", "#efefef");
-        colors.put("fromGroup", "#efefef");
-        colors.put("fromGroups", "#efefef");
+        colors.put("fromUser", "#a0b0d0");
+        colors.put("fromUsers", "#a0b0d0");
+        colors.put("fromPost", "#d0a0b0");
+        colors.put("fromPosts", "#d0a0b0");
+        colors.put("fromGroup", "#a0d0b0");
+        colors.put("fromGroups", "#a0d0b0");
 
 
-        colors.put("friends", "#4779BE");
-        colors.put("followers", "#4779BE");
-        colors.put("subscriptions", "#4779BE");
-        colors.put("likes", "#4779BE");
-        colors.put("shares", "#4779BE");
-        colors.put("subscribers", "#4779BE");
+        colors.put("friends", "#a0b0d0");
+        colors.put("followers", "#a0b0d0");
+        colors.put("subscriptions", "#a0b0d0");
+        colors.put("likes", "#a0b0d0");
+        colors.put("shares", "#a0b0d0");
+        colors.put("subscribers", "#a0b0d0");
 
-        colors.put("posts", "#841F27");
+        colors.put("posts", "#d0a0b0");
 
-        colors.put("groups", "#fffacd");
+        colors.put("groups", "#a0d0b0");
 
         colors.put("where", "#efefef");
         colors.put("then", "#efefef");
@@ -62,6 +64,11 @@ public class MethodResolver {
         endpoints.put("followers", "api/user/followers");
         endpoints.put("subscriptions", "api/user/subscriptions");
         endpoints.put("groups", "api/user/groups");
+
+        endpoints.put("likes", "api/post/likes");
+        endpoints.put("shares", "api/post/shares");
+
+        endpoints.put("subscribers", "api/group/subscribers");
     }
 
     static {
@@ -81,23 +88,26 @@ public class MethodResolver {
         prettifyMethodsNames.put("posts", "Posts");
         prettifyMethodsNames.put("groups", "Groups");
 
-        prettifyMethodsNames.put("from", null);
-        prettifyMethodsNames.put("fromEntities", null);
+        prettifyMethodsNames.put("likes", "Likes");
+        prettifyMethodsNames.put("shares", "Shares");
+
+        prettifyMethodsNames.put("subscribers", "Subscribers");
+
 
         prettifyMethodsNames.put("where", "Where");
         prettifyMethodsNames.put("then", "Then");
         prettifyMethodsNames.put("perform", "Perform");
     }
 
-    public static List<AvailableMethod> availableMethodsOf(Class clazz) {
+    public static List<AvailableMethod> availableMethodsOf(Class<?> clazz) {
         List<AvailableMethod> methods = Lists.newArrayList();
 
         for (Method method : ReflectionUtils.getAllDeclaredMethods(clazz)) {
             String name = getName(method);
             if (name != null) {
-                String type = getType(method);
+                String type = getType(clazz);
                 String parameter = getParameter(method);
-                String uri = getUri(method);
+                String uri = getUri(clazz, method);
                 String color = getColor(method);
                 methods.add(AvailableMethod.of(name, type, uri, parameter, color));
             }
@@ -110,8 +120,8 @@ public class MethodResolver {
         return prettifyMethodsNames.get(method.getName());
     }
 
-    private static String getType(Method method) {
-        return method.getDeclaringClass().isAssignableFrom(Search.class) ? "GET" : "POST";
+    private static String getType(Class<?> clazz) {
+        return clazz.isAssignableFrom(Search.class) ? "GET" : "POST";
     }
 
     private static String getParameter(Method method) {
@@ -123,23 +133,23 @@ public class MethodResolver {
         return String.join(",", parameters);
     }
 
-    private static String getUri(Method method) {
+    private static String getUri(Class<?> clazz, Method method) {
         String uri = endpoints.get(method.getName());
         if (uri == null) {
-            uri = additionalResolve(method);
+            uri = additionalResolve(clazz, method);
         }
         return uri;
     }
 
-    private static String additionalResolve(Method method) {
-        Class<?> clazz = method.getDeclaringClass();
+    private static String additionalResolve(Class<?> clazz, Method method) {
+        String methodName = method.getName();
 
         if (clazz.isAssignableFrom(UserSearch.class)) {
-            return "api/user/" + method.getName();
+            return "api/user/" + methodName;
         } else if (clazz.isAssignableFrom(PostSearch.class)) {
-            return "api/post/" + method.getName();
+            return "api/post/" + methodName;
         } else if (clazz.isAssignableFrom(GroupSearch.class)) {
-            return "api/group/" + method.getName();
+            return "api/group/" + methodName;
         }
         throw new IllegalArgumentException("Illegal type of method");
     }

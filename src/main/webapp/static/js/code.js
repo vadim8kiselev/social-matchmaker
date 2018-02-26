@@ -1,4 +1,5 @@
 function load(method, uri, data, parameters, callback) {
+    toggleLoader(true);
     let urlParams = jQuery.param(parameters);
     $.ajax({
         type: method,
@@ -9,16 +10,27 @@ function load(method, uri, data, parameters, callback) {
         processData: false,
         contentType: 'application/json',
         success: function (data) {
-            console.log(data);
+            toggleLoader(false);
             callback(data)
         },
         error: function (error) {
+            toggleLoader(false);
             alert('An error has occurred: ' + error.responseCode)
         }
     });
 }
 
-function createButton(body, name, method, uri, parameters, color, callback) {
+function createDialog(params, callback) {
+    let parameters = {};
+    for (let param in params) {
+        if (params.hasOwnProperty(param)) {
+            parameters[params[param]] = prompt("Please, fill value for parameter '" + params[param] + "'");
+        }
+    }
+    callback(parameters);
+}
+
+function createButton(body, name, method, uri, parameter, color, callback) {
     let button = document.createElement('span');
     button.className += 'inner_block';
     button.innerText = name;
@@ -26,22 +38,24 @@ function createButton(body, name, method, uri, parameters, color, callback) {
 
     $(button).click(function () {
         if (!button.parentElement.hasAttribute('disabled')) {
-
-            for (let parameter in parameters) {
-                if (parameters.hasOwnProperty(parameter)) {
-                    parameters[parameter] = prompt("Please, fill value for parameter '" + parameter + "'"); // TODO:
-                }
+            if (parameter && typeof parameter === 'string') {
+                let params = parameter.split(',');
+                createDialog(params,
+                    function(parameters) {
+                        load(method, uri, body, parameters, callback);
+                    });
+            } else {
+                load(method, uri, body, {}, callback);
             }
-
-            load(method, uri, body, parameters, callback);
         }
     });
-
     return button
 }
 
 function createLevel(data) {
-    disableLastLevel();
+    let wrapper = $('.wrapper');
+    toggleCross(false);
+    toggleLastLevel(false);
 
     let level = document.createElement('div');
     level.className += 'block';
@@ -52,51 +66,62 @@ function createLevel(data) {
         for (let iterate in methods) {
             if (methods.hasOwnProperty(iterate)) {
                 let method = methods[iterate];
-
-                let parameters = {};
-                if (method.parameter) {
-                    parameters[method.parameter] = '';
-                }
-
-                let button = createButton(
-                    data.search,
-                    method.name,
-                    method.type,
-                    method.uri,
-                    parameters,
-                    method.color,
+                level.appendChild(createButton(data.search, method.name, method.type, method.uri, method.parameter, method.color,
                     function (data) {
                         createLevel(data)
-                    });
-                level.appendChild(button);
+                    }));
             }
         }
-
+        let cross = toggleCross(true);
+        wrapper.append(level);
+        wrapper.append(cross);
     } else {
-        let button = createButton(
-            undefined,
-            'Search',
-            'GET',
-            'api/start',
-            {},
-            '#eaeaea',
+        level.appendChild(createButton(undefined, 'Search', 'GET', 'api/start', {}, '#f7f7f7',
             function (data) {
                 createLevel(data)
-            });
-        level.appendChild(button);
+            }));
+        wrapper.append(level);
     }
-
-    $('.wrapper').append(level);
 }
 
-function disableLastLevel() {
-    $('.wrapper .block').last().attr("disabled", 'true');
+function toggleCross(enable) {
+    if (enable) {
+        let cross = document.createElement('img');
+        cross.className += 'cross';
+        cross.src += '/static/img/cross.png';
+
+        $(cross).click(function () {
+            $('.wrapper .block').last().remove();
+            toggleLastLevel(true);
+
+            if($('.wrapper .block').length <= 1) {
+                toggleCross(false);
+            }
+        });
+        return cross;
+    } else {
+        $('.wrapper .cross').remove();
+    }
 }
 
-function removeLastLevel() {
-    $('.wrapper .block').last().remove()
+function toggleLastLevel(enable) {
+    if (enable) {
+        $('.wrapper .block').last().removeAttr("disabled");
+    } else {
+        $('.wrapper .block').last().attr("disabled", 'true');
+    }
+}
+
+function toggleLoader(enable) {
+    if (enable) {
+        let loader = document.createElement('div');
+        loader.className += 'loader';
+        $('body').append(loader);
+    } else {
+        $('.loader').remove();
+    }
 }
 
 $(document).ready(function () {
-    createLevel(undefined);
+    createLevel();
 });
