@@ -1,4 +1,4 @@
-function load(method, uri, data, parameters, callback) {
+function load(method, uri, data, dataType, parameters, success, error) {
     toggleLoader(true);
     let urlParams = jQuery.param(parameters);
     $.ajax({
@@ -6,17 +6,11 @@ function load(method, uri, data, parameters, callback) {
         url: 'http://localhost:8080/' + uri + (urlParams ? '?' + urlParams : ''),
         async: true,
         data: JSON.stringify(data),
-        dataType: 'json',
+        dataType: dataType,
         processData: false,
         contentType: 'application/json',
-        success: function (data) {
-            toggleLoader(false);
-            callback(data)
-        },
-        error: function (error) {
-            toggleLoader(false);
-            alert('An error has occurred: ' + error.responseCode)
-        }
+        success: success,
+        error: error
     });
 }
 
@@ -31,21 +25,42 @@ function createDialog(params, callback) {
 }
 
 function createButton(body, name, method, uri, parameter, color, callback) {
-    let button = document.createElement('span');
+    let button = document.createElement('a');
     button.className += 'inner_block';
     button.innerText = name;
     button.style.backgroundColor = color;
 
-    $(button).click(function () {
+    let success = function (data) {
+        toggleLoader(false);
+        console.log(data);
+        callback(data)
+    };
+
+    let performSuccess = function (data) {
+        toggleLoader(false);
+        console.log(data);
+    };
+
+    let error = function (error) {
+        toggleLoader(false);
+        alert('An error has occurred: ' + error.responseCode)
+    };
+
+    $(button).click(function (event) {
+        event.preventDefault();
         if (!button.parentElement.hasAttribute('disabled')) {
             if (parameter && typeof parameter === 'string') {
                 let params = parameter.split(',');
                 createDialog(params,
-                    function(parameters) {
-                        load(method, uri, body, parameters, callback);
+                    function (parameters) {
+                        load(method, uri, body,
+                            name === 'Perform' ? 'text' : 'json',
+                            parameters,
+                            name === 'Perform' ? performSuccess : success,
+                            error);
                     });
             } else {
-                load(method, uri, body, {}, callback);
+                load(method, uri, body, 'json', {}, success, error);
             }
         }
     });
@@ -94,7 +109,7 @@ function toggleCross(enable) {
             $('.wrapper .block').last().remove();
             toggleLastLevel(true);
 
-            if($('.wrapper .block').length <= 1) {
+            if ($('.wrapper .block').length <= 1) {
                 toggleCross(false);
             }
         });

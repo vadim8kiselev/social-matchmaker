@@ -1,6 +1,7 @@
 package com.kiselev.matchmaker.api.network.vk;
 
 import com.kiselev.matchmaker.api.network.vk.aspect.VKCallTimeoutAspect;
+import com.kiselev.matchmaker.api.network.vk.configuration.VKAPIConfiguration;
 import com.kiselev.matchmaker.api.network.vk.converter.VKEntityConverter;
 import com.kiselev.matchmaker.api.network.vk.implementation.VKAPI;
 import com.kiselev.matchmaker.api.network.vk.implementation.internal.VKAPIInternal;
@@ -16,6 +17,11 @@ import org.springframework.context.annotation.Profile;
 @EnableCaching
 @Configuration
 public class VKConfiguration {
+
+    @Bean
+    public VKAPIConfiguration vkapiConfiguration() {
+        return new VKAPIConfiguration();
+    }
 
     @Bean
     @Primary

@@ -22,22 +22,37 @@ public class JSONSerializeView implements SerializeView {
         try {
             writeJSONToFile(entities, filePath);
         } catch (IOException firstException) {
-
             try {
-                Path path = Paths.get(PATH);
-                if (Files.notExists(path)) {
-                    Files.createDirectories(path);
-                }
-
-                writeJSONToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
+                writeJSONToNewFile(entities);
             } catch (IOException secondException) {
                 secondException.printStackTrace();
             }
         }
     }
 
-    private <Pojo extends Entity> void writeJSONToFile(List<Pojo> entities, String filePath) throws IOException {
+    @Override
+    public <Pojo extends Entity> File serialize(List<Pojo> entities) {
+        try {
+            return writeJSONToNewFile(entities);
+        } catch (IOException secondException) {
+            secondException.printStackTrace();
+        }
+        return null;
+    }
+
+    private <Pojo extends Entity> File writeJSONToFile(List<Pojo> entities, String filePath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(new File(filePath), entities);
+        File file = new File(filePath);
+        objectMapper.writeValue(file, entities);
+        return file;
+    }
+
+    private <Pojo extends Entity> File writeJSONToNewFile(List<Pojo> entities) throws IOException {
+        Path path = Paths.get(PATH);
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+
+        return writeJSONToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
     }
 }

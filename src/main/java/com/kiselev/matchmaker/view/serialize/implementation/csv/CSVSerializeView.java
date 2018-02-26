@@ -8,6 +8,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
@@ -30,21 +31,27 @@ public class CSVSerializeView implements SerializeView {
         try {
             writeCSVToFile(entities, filePath);
         } catch (IOException firstException) {
-
             try {
-                Path path = Paths.get(PATH);
-                if (Files.notExists(path)) {
-                    Files.createDirectories(path);
-                }
-
-                writeCSVToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
+                writeCSVToNewFile(entities);
             } catch (IOException secondException) {
                 secondException.printStackTrace();
             }
         }
     }
 
-    private <Pojo extends Entity> void writeCSVToFile(List<Pojo> entities, String filePath) throws IOException {
+    @Override
+    public <Pojo extends Entity> File serialize(List<Pojo> entities) {
+        validateEntities(entities);
+
+        try {
+            return writeCSVToNewFile(entities);
+        } catch (IOException secondException) {
+            secondException.printStackTrace();
+        }
+        return null;
+    }
+
+    private <Pojo extends Entity> File writeCSVToFile(List<Pojo> entities, String filePath) throws IOException {
         try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(filePath));
              CSVPrinter csvPrinter = new CSVPrinter(writer, composeHeader(entities))) {
 
@@ -58,7 +65,18 @@ public class CSVSerializeView implements SerializeView {
 
             csvPrinter.flush();
         }
+        return new File(filePath);
     }
+
+    private <Pojo extends Entity> File writeCSVToNewFile(List<Pojo> entities) throws IOException {
+        Path path = Paths.get(PATH);
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+
+        return writeCSVToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
+    }
+
 
     private <Pojo extends Entity> CSVFormat composeHeader(List<Pojo> entities) {
         CSVFormat csvFormat = CSVFormat.DEFAULT;
@@ -84,7 +102,7 @@ public class CSVSerializeView implements SerializeView {
             field.setAccessible(true);
             try {
                 record.add(field.get(entity).toString());
-            } catch (IllegalAccessException e) {
+            } catch (IllegalAccessException | NullPointerException e) {
                 e.printStackTrace();
             }
         }

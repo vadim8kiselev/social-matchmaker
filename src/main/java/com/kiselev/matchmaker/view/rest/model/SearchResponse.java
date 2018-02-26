@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Response<SearchType> {
+public class SearchResponse<SearchType> {
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
     @JsonSubTypes({
@@ -25,7 +25,7 @@ public class Response<SearchType> {
 
     private List<AvailableMethod> methods;
 
-    public static <SearchType> Response of(SearchType search, List<AvailableMethod> methods) {
-        return new Response<>(search, methods);
+    public static <SearchType> SearchResponse of(SearchType search, List<AvailableMethod> methods) {
+        return new SearchResponse<>(search, methods);
     }
 }

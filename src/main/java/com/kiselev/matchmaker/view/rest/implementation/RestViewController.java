@@ -13,18 +13,25 @@ import com.kiselev.matchmaker.search.service.contract.UserSearchContract;
 import com.kiselev.matchmaker.search.service.target.general.GeneralGroupSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
-import com.kiselev.matchmaker.view.rest.model.PerformResponse;
-import com.kiselev.matchmaker.view.rest.model.Response;
+import com.kiselev.matchmaker.view.rest.model.SearchResponse;
 import com.kiselev.matchmaker.view.rest.resolver.MethodResolver;
 import com.kiselev.matchmaker.view.serialize.SerializeView;
 import com.kiselev.matchmaker.view.serialize.resolver.SerializeResolver;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.io.*;
 import java.util.List;
 
 /**
@@ -42,163 +49,178 @@ public class RestViewController {
     private SerializeResolver serializeResolver;
 
     @RequestMapping(path = "/start", method = RequestMethod.GET)
-    public Response start() {
-        return Response.of(null, MethodResolver.availableMethodsOf(Search.class));
+    public SearchResponse start() {
+        return SearchResponse.of(null, MethodResolver.availableMethodsOf(Search.class));
     }
 
     @RequestMapping(path = "/fromUser", method = RequestMethod.GET)
-    public Response fromUser(@RequestParam("userId") String userId) {
+    public SearchResponse fromUser(@RequestParam("userId") String userId) {
         GeneralUserSearch userSearch = search.fromUser(userId);
-        return Response.of(userSearch, MethodResolver.availableMethodsOf(GeneralUserSearch.class));
+        return SearchResponse.of(userSearch, MethodResolver.availableMethodsOf(GeneralUserSearch.class));
     }
 
     @RequestMapping(path = "/fromUsers", method = RequestMethod.GET)
-    public Response fromUsers(@RequestParam("usersIds") List<String> usersIds) {
+    public SearchResponse fromUsers(@RequestParam("usersIds") List<String> usersIds) {
         GeneralUserSearch userSearch = search.fromUsers(usersIds);
-        return Response.of(userSearch, MethodResolver.availableMethodsOf(GeneralUserSearch.class));
+        return SearchResponse.of(userSearch, MethodResolver.availableMethodsOf(GeneralUserSearch.class));
     }
 
     @RequestMapping(path = "/fromPost", method = RequestMethod.GET)
-    public Response fromPost(@RequestParam("postId") String postId) {
+    public SearchResponse fromPost(@RequestParam("postId") String postId) {
         GeneralPostSearch postSearch = search.fromPost(postId);
-        return Response.of(postSearch, MethodResolver.availableMethodsOf(GeneralPostSearch.class));
+        return SearchResponse.of(postSearch, MethodResolver.availableMethodsOf(GeneralPostSearch.class));
     }
 
     @RequestMapping(path = "/fromPosts", method = RequestMethod.GET)
-    public Response fromPosts(@RequestParam("postsIds") List<String> postsIds) {
+    public SearchResponse fromPosts(@RequestParam("postsIds") List<String> postsIds) {
         GeneralPostSearch postSearch = search.fromPosts(postsIds);
-        return Response.of(postSearch, MethodResolver.availableMethodsOf(GeneralPostSearch.class));
+        return SearchResponse.of(postSearch, MethodResolver.availableMethodsOf(GeneralPostSearch.class));
     }
 
     @RequestMapping(path = "/fromGroup", method = RequestMethod.GET)
-    public Response fromGroup(@RequestParam("groupId") String groupId) {
+    public SearchResponse fromGroup(@RequestParam("groupId") String groupId) {
         GeneralGroupSearch groupSearch = search.fromGroup(groupId);
-        return Response.of(groupSearch, MethodResolver.availableMethodsOf(GeneralGroupSearch.class));
+        return SearchResponse.of(groupSearch, MethodResolver.availableMethodsOf(GeneralGroupSearch.class));
     }
 
     @RequestMapping(path = "/fromGroups", method = RequestMethod.GET)
-    public Response fromGroups(@RequestParam("groupsIds") List<String> groupsIds) {
+    public SearchResponse fromGroups(@RequestParam("groupsIds") List<String> groupsIds) {
         GeneralGroupSearch groupSearch = search.fromGroups(groupsIds);
-        return Response.of(groupSearch, MethodResolver.availableMethodsOf(GeneralGroupSearch.class));
+        return SearchResponse.of(groupSearch, MethodResolver.availableMethodsOf(GeneralGroupSearch.class));
     }
 
     @RequestMapping(path = "/user/friends", method = RequestMethod.POST)
-    public Response friends(@RequestBody UserSearchContract userSearch) {
+    public SearchResponse friends(@RequestBody UserSearchContract userSearch) {
         UserSearchConcept friends = userSearch.friends();
-        return Response.of(friends, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(friends, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/followers", method = RequestMethod.POST)
-    public Response followers(@RequestBody UserSearchContract userSearch) {
+    public SearchResponse followers(@RequestBody UserSearchContract userSearch) {
         UserSearchConcept followers = userSearch.followers();
-        return Response.of(followers, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(followers, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/subscriptions", method = RequestMethod.POST)
-    public Response subscriptions(@RequestBody UserSearchContract userSearch) {
+    public SearchResponse subscriptions(@RequestBody UserSearchContract userSearch) {
         UserSearchConcept subscriptions = userSearch.subscriptions();
-        return Response.of(subscriptions, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(subscriptions, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/posts", method = RequestMethod.POST)
-    public Response posts(@RequestBody UserSearchContract userSearch) {
+    public SearchResponse posts(@RequestBody UserSearchContract userSearch) {
         PostSearchConcept posts = userSearch.posts();
-        return Response.of(posts, MethodResolver.availableMethodsOf(PostSearchConcept.class));
+        return SearchResponse.of(posts, MethodResolver.availableMethodsOf(PostSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/groups", method = RequestMethod.POST)
-    public Response groups(@RequestBody UserSearchContract userSearch) {
+    public SearchResponse groups(@RequestBody UserSearchContract userSearch) {
         GroupSearchConcept groups = userSearch.groups();
-        return Response.of(groups, MethodResolver.availableMethodsOf(GroupSearchConcept.class));
+        return SearchResponse.of(groups, MethodResolver.availableMethodsOf(GroupSearchConcept.class));
     }
 
     @RequestMapping(path = "/post/likes", method = RequestMethod.POST)
-    public Response likes(@RequestBody PostSearchContract postSearch) {
+    public SearchResponse likes(@RequestBody PostSearchContract postSearch) {
         UserSearchConcept likes = postSearch.likes();
-        return Response.of(likes, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(likes, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/post/shares", method = RequestMethod.POST)
-    public Response shares(@RequestBody PostSearchContract postSearch) {
+    public SearchResponse shares(@RequestBody PostSearchContract postSearch) {
         UserSearchConcept shares = postSearch.shares();
-        return Response.of(shares, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(shares, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/group/subscribers", method = RequestMethod.POST)
-    public Response subscribers(@RequestBody GroupSearchContract groupSearch) {
+    public SearchResponse subscribers(@RequestBody GroupSearchContract groupSearch) {
         UserSearchConcept subscribers = groupSearch.subscribers();
-        return Response.of(subscribers, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(subscribers, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/group/posts", method = RequestMethod.POST)
-    public Response posts(@RequestBody GroupSearchContract groupSearch) {
+    public SearchResponse posts(@RequestBody GroupSearchContract groupSearch) {
         PostSearchConcept posts = groupSearch.posts();
-        return Response.of(posts, MethodResolver.availableMethodsOf(PostSearchConcept.class));
+        return SearchResponse.of(posts, MethodResolver.availableMethodsOf(PostSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/where", method = RequestMethod.POST)
-    public Response where(@RequestBody UserSearchConcept userSearchConcept /* Condition condition */) {
+    public SearchResponse where(@RequestBody UserSearchConcept userSearchConcept /* Condition condition */) {
         UserSearchConcept where = userSearchConcept.where(null);
-        return Response.of(where, MethodResolver.availableMethodsOf(UserSearchConcept.class));
+        return SearchResponse.of(where, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/post/where", method = RequestMethod.POST)
-    public Response where(@RequestBody PostSearchConcept postSearchConcept /* Condition condition */) {
+    public SearchResponse where(@RequestBody PostSearchConcept postSearchConcept /* Condition condition */) {
         PostSearchConcept where = postSearchConcept.where(null);
-        return Response.of(where, MethodResolver.availableMethodsOf(PostSearchConcept.class));
+        return SearchResponse.of(where, MethodResolver.availableMethodsOf(PostSearchConcept.class));
     }
 
     @RequestMapping(path = "/group/where", method = RequestMethod.POST)
-    public Response where(@RequestBody GroupSearchConcept groupSearchConcept /* Condition condition */) {
+    public SearchResponse where(@RequestBody GroupSearchConcept groupSearchConcept /* Condition condition */) {
         GroupSearchConcept where = groupSearchConcept.where(null);
-        return Response.of(where, MethodResolver.availableMethodsOf(GroupSearchConcept.class));
+        return SearchResponse.of(where, MethodResolver.availableMethodsOf(GroupSearchConcept.class));
     }
 
     @RequestMapping(path = "/user/then", method = RequestMethod.POST)
-    public Response then(@RequestBody UserSearchConcept userSearchConcept) {
+    public SearchResponse then(@RequestBody UserSearchConcept userSearchConcept) {
         UserSearchContract then = userSearchConcept.then();
-        return Response.of(then, MethodResolver.availableMethodsOf(UserSearchContract.class));
+        return SearchResponse.of(then, MethodResolver.availableMethodsOf(UserSearchContract.class));
     }
 
     @RequestMapping(path = "/post/then", method = RequestMethod.POST)
-    public Response then(@RequestBody PostSearchConcept postSearchConcept) {
+    public SearchResponse then(@RequestBody PostSearchConcept postSearchConcept) {
         PostSearchContract then = postSearchConcept.then();
-        return Response.of(then, MethodResolver.availableMethodsOf(PostSearchContract.class));
+        return SearchResponse.of(then, MethodResolver.availableMethodsOf(PostSearchContract.class));
     }
 
     @RequestMapping(path = "/group/then", method = RequestMethod.POST)
-    public Response then(@RequestBody GroupSearchConcept groupSearchConcept) {
+    public SearchResponse then(@RequestBody GroupSearchConcept groupSearchConcept) {
         GroupSearchContract then = groupSearchConcept.then();
-        return Response.of(then, MethodResolver.availableMethodsOf(GroupSearchContract.class));
+        return SearchResponse.of(then, MethodResolver.availableMethodsOf(GroupSearchContract.class));
     }
 
     @RequestMapping(path = "/user/perform", method = RequestMethod.POST)
-    public PerformResponse perform(@RequestBody GeneralUserSearch userSearch, @RequestParam(value = "type", required = false, defaultValue = "none") String type) {
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public void perform(@RequestBody GeneralUserSearch userSearch,
+                        @RequestParam(value = "type", defaultValue = "json") String type,
+                        HttpServletResponse response) throws IOException {
         List<User> users = userSearch.perform();
 
         SerializeView serializer = serializeResolver.resolve(type);
-        serializer.serialize(users, "");
+        File file = serializer.serialize(users);
+        response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        return PerformResponse.of(users);
+        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        response.flushBuffer();
     }
 
     @RequestMapping(path = "/post/perform", method = RequestMethod.POST)
-    public PerformResponse perform(@RequestBody GeneralPostSearch postSearch, @RequestParam(value = "type", required = false, defaultValue = "none") String type) {
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public void perform(@RequestBody GeneralPostSearch postSearch,
+                        @RequestParam(value = "type", defaultValue = "json") String type,
+                        HttpServletResponse response) throws IOException {
         List<Post> posts = postSearch.perform();
 
         SerializeView serializer = serializeResolver.resolve(type);
-        serializer.serialize(posts, "");
+        File file = serializer.serialize(posts);
+        response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        return PerformResponse.of(posts);
+        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        response.flushBuffer();
     }
 
     @RequestMapping(path = "/group/perform", method = RequestMethod.POST)
-    public PerformResponse perform(@RequestBody GeneralGroupSearch groupSearch, @RequestParam(value = "type", required = false, defaultValue = "none") String type) {
+    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    public void perform(@RequestBody GeneralGroupSearch groupSearch,
+                        @RequestParam(value = "type", defaultValue = "json") String type,
+                        HttpServletResponse response) throws IOException {
         List<Group> groups = groupSearch.perform();
 
         SerializeView serializer = serializeResolver.resolve(type);
-        serializer.serialize(groups, "");
+        File file = serializer.serialize(groups);
+        response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        return PerformResponse.of(groups);
+        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        response.flushBuffer();
     }
 }

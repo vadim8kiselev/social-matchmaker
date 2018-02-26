@@ -24,11 +24,13 @@ public class RestAspect {
     @Before("endpoint()")
     public void autowireDeserializedBeans(JoinPoint joinPoint) {
         for (Object arg : joinPoint.getArgs()) {
-            Class<?> type = arg.getClass();
-            if (type.isAssignableFrom(UserSearch.class)
-                    || type.isAssignableFrom(PostSearch.class)
-                    || type.isAssignableFrom(GroupSearch.class)) {
-                applicationContext.getAutowireCapableBeanFactory().autowireBean(arg);
+            if (arg != null) {
+                Class<?> type = arg.getClass();
+                if (type.isAssignableFrom(UserSearch.class)
+                        || type.isAssignableFrom(PostSearch.class)
+                        || type.isAssignableFrom(GroupSearch.class)) {
+                    applicationContext.getAutowireCapableBeanFactory().autowireBean(arg);
+                }
             }
         }
     }

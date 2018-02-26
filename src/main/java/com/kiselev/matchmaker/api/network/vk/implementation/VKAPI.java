@@ -6,12 +6,15 @@ import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
 import com.kiselev.matchmaker.api.network.vk.annotation.Doc;
+import com.kiselev.matchmaker.api.network.vk.configuration.VKAPIConfiguration;
 import com.kiselev.matchmaker.api.network.vk.implementation.internal.SocialNetworkAPIInternal;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
+import com.vk.api.sdk.exceptions.ApiException;
+import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
+import com.vk.api.sdk.objects.UserAuthResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
@@ -25,21 +28,31 @@ public class VKAPI implements SocialNetworkAPI {
     @Autowired
     private SocialNetworkAPIInternal api;
 
-    @Value("${vk.user.id}")
-    private Integer userId;
-
-    @Value("${vk.user.token}")
-    private String token;
-
-    private VkApiClient vk;
-
-    private UserActor user;
+    @Autowired
+    private VKAPIConfiguration configuration;
 
     @PostConstruct
     public void auth() {
-        vk = new VkApiClient(HttpTransportClient.getInstance(), new Gson(), Integer.MAX_VALUE);
-        user = new UserActor(userId, token);
-        api.auth(vk, user);
+        VkApiClient vk = new VkApiClient(HttpTransportClient.getInstance(), new Gson(), Integer.MAX_VALUE);
+        UserActor user;
+
+        try {
+            UserAuthResponse authResponse = vk.oauth()
+                    .userAuthorizationCodeFlow(configuration.getClientId(),
+                            configuration.getClientSecret(),
+                            configuration.getRedirectUri(),
+                            configuration.getSecretCode())
+                    .execute();
+
+            Integer userId = authResponse.getUserId();
+            String accessToken = authResponse.getAccessToken();
+            user = new UserActor(userId, accessToken);
+
+            api.auth(vk, user);
+        } catch (ApiException | ClientException exception) {
+            exception.printStackTrace();
+            System.exit(1);
+        }
     }
 
     /**

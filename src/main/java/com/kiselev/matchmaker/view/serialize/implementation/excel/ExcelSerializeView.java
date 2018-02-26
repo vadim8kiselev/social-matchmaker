@@ -8,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -26,23 +27,31 @@ public class ExcelSerializeView implements SerializeView {
     @Override
     public <Pojo extends Entity> void serialize(List<Pojo> entities, String filePath) {
         validateEntities(entities);
+
         try {
             writeXLSToFile(entities, filePath);
         } catch (IOException firstException) {
             try {
-                Path path = Paths.get(PATH);
-                if (Files.notExists(path)) {
-                    Files.createDirectories(path);
-                }
-
-                writeXLSToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
+                writeXLSToNewFile(entities);
             } catch (IOException secondException) {
                 secondException.printStackTrace();
             }
         }
     }
 
-    private <Pojo extends Entity> void writeXLSToFile(List<Pojo> entities, String filePath) throws IOException {
+    @Override
+    public <Pojo extends Entity> File serialize(List<Pojo> entities) {
+        validateEntities(entities);
+
+        try {
+            return writeXLSToNewFile(entities);
+        } catch (IOException secondException) {
+            secondException.printStackTrace();
+        }
+        return null;
+    }
+
+    private <Pojo extends Entity> File writeXLSToFile(List<Pojo> entities, String filePath) throws IOException {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet");
 
@@ -55,6 +64,17 @@ public class ExcelSerializeView implements SerializeView {
         try (FileOutputStream outputStream = new FileOutputStream(filePath)) {
             workbook.write(outputStream);
         }
+
+        return new File(filePath);
+    }
+
+    private <Pojo extends Entity> File writeXLSToNewFile(List<Pojo> entities) throws IOException {
+        Path path = Paths.get(PATH);
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+
+        return writeXLSToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
     }
 
     private void updateColumns(XSSFSheet sheet) {

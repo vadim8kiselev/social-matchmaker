@@ -25,22 +25,25 @@ public class XMLSerializeView implements SerializeView {
         try {
             writeXMLToFile(entities, filePath);
         } catch (JAXBException firstException) {
-
             try {
-                Path path = Paths.get(PATH);
-                if (Files.notExists(path)) {
-                    Files.createDirectories(path);
-                }
-
-                writeXMLToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
+                writeXMLToNewFile(entities);
             } catch (IOException | JAXBException secondException) {
                 secondException.printStackTrace();
             }
         }
     }
 
-    private <Pojo extends Entity> void writeXMLToFile(List<Pojo> entities, String filePath) throws JAXBException {
+    @Override
+    public <Pojo extends Entity> File serialize(List<Pojo> entities){
+        try {
+            return writeXMLToNewFile(entities);
+        } catch (IOException | JAXBException secondException) {
+            secondException.printStackTrace();
+        }
+        return null;
+    }
 
+    private <Pojo extends Entity> File writeXMLToFile(List<Pojo> entities, String filePath) throws JAXBException {
         EntitiesList<Pojo> entitiesList = new EntitiesList<>(entities);
 
         JAXBContext jaxbContext = JAXBContext.newInstance(entitiesList.getClass());
@@ -49,6 +52,16 @@ public class XMLSerializeView implements SerializeView {
         // output pretty printed
         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
 
-        jaxbMarshaller.marshal(entitiesList, new File(filePath));
+        File file = new File(filePath);
+        jaxbMarshaller.marshal(entitiesList, file);
+        return file;
+    }
+
+    private <Pojo extends Entity> File writeXMLToNewFile(List<Pojo> entities) throws IOException, JAXBException {
+        Path path = Paths.get(PATH);
+        if (Files.notExists(path)) {
+            Files.createDirectories(path);
+        }
+        return writeXMLToFile(entities, PATH + UUID.randomUUID().toString() + EXTENSION);
     }
 }

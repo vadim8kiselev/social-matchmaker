@@ -21,18 +21,6 @@ public class RestViewConfiguration {
     }
 
     @Bean
-    public HandlerInstantiator handlerInstantiator(ApplicationContext applicationContext) {
-        return new SpringHandlerInstantiator(applicationContext.getAutowireCapableBeanFactory());
-    }
-
-    @Bean
-    public Jackson2ObjectMapperBuilder objectMapperBuilder(HandlerInstantiator handlerInstantiator) {
-        Jackson2ObjectMapperBuilder builder = new Jackson2ObjectMapperBuilder();
-        builder.handlerInstantiator(handlerInstantiator);
-        return builder;
-    }
-
-    @Bean
     public RestAspect restAspect() {
         return new RestAspect();
     }

@@ -85,6 +85,6 @@ public class VKPropertyMapper {
     }
 
     public static String getRelation(String key) {
-        return relation.get(key);
+        return relation.get(key) != null ? relation.get(key) : "";
     }
 }

@@ -3,6 +3,7 @@ package com.kiselev.matchmaker.view.rest.resolver;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.kiselev.matchmaker.search.service.Search;
+import com.kiselev.matchmaker.search.service.concept.theory.PerformableSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.GroupSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
@@ -129,6 +130,10 @@ public class MethodResolver {
                 .filter(parameter -> parameter.getType().isAssignableFrom(String.class) || parameter.getType().isAssignableFrom(List.class))
                 .map(Parameter::getName)
                 .collect(Collectors.toList());
+
+        if (method.getDeclaringClass().isAssignableFrom(PerformableSearch.class)) {
+            parameters.add("type");
+        }
 
         return String.join(",", parameters);
     }
