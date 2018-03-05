@@ -45,6 +45,7 @@ public class MethodResolver {
 
         colors.put("groups", "#a0d0b0");
 
+        colors.put("with", "#efefef");
         colors.put("where", "#efefef");
         colors.put("then", "#efefef");
         colors.put("perform", "#efefef");
@@ -95,6 +96,7 @@ public class MethodResolver {
         prettifyMethodsNames.put("subscribers", "Subscribers");
 
 
+        prettifyMethodsNames.put("with", "With");
         prettifyMethodsNames.put("where", "Where");
         prettifyMethodsNames.put("then", "Then");
         prettifyMethodsNames.put("perform", "Perform");

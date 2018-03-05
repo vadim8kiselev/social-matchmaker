@@ -10,7 +10,7 @@ import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
 
 @JsonDeserialize(as = UserSearch.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public interface UserSearchContract extends GeneralSearchContract {
+public interface UserSearchContract extends GeneralSearchContract<UserSearchContract> {
 
     UserSearchConcept friends();
 

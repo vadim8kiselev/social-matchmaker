@@ -9,7 +9,7 @@ import com.kiselev.matchmaker.search.service.target.implementation.GroupSearch;
 
 @JsonDeserialize(as = GroupSearch.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public interface GroupSearchContract extends GeneralSearchContract {
+public interface GroupSearchContract extends GeneralSearchContract<GroupSearchContract> {
 
     UserSearchConcept subscribers();
 

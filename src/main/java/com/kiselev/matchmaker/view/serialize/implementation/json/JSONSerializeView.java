@@ -3,6 +3,7 @@ package com.kiselev.matchmaker.view.serialize.implementation.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kiselev.matchmaker.api.model.Entity;
 import com.kiselev.matchmaker.view.serialize.SerializeView;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,9 @@ public class JSONSerializeView implements SerializeView {
 
     private static final String PATH = "export\\json\\";
     private static final String EXTENSION = ".json";
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public <Pojo extends Entity> void serialize(List<Pojo> entities, String filePath) {
@@ -41,7 +45,6 @@ public class JSONSerializeView implements SerializeView {
     }
 
     private <Pojo extends Entity> File writeJSONToFile(List<Pojo> entities, String filePath) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         File file = new File(filePath);
         objectMapper.writeValue(file, entities);
         return file;

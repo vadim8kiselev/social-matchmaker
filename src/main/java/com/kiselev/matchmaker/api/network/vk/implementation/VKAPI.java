@@ -7,7 +7,7 @@ import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
 import com.kiselev.matchmaker.api.network.vk.annotation.Doc;
 import com.kiselev.matchmaker.api.network.vk.configuration.VKAPIConfiguration;
-import com.kiselev.matchmaker.api.network.vk.implementation.internal.SocialNetworkAPIInternal;
+import com.kiselev.matchmaker.api.network.vk.implementation.internal.VKAPIInternal;
 import com.vk.api.sdk.client.VkApiClient;
 import com.vk.api.sdk.client.actors.UserActor;
 import com.vk.api.sdk.exceptions.ApiException;
@@ -26,7 +26,7 @@ import java.util.List;
 public class VKAPI implements SocialNetworkAPI {
 
     @Autowired
-    private SocialNetworkAPIInternal api;
+    private VKAPIInternal api;
 
     @Autowired
     private VKAPIConfiguration configuration;

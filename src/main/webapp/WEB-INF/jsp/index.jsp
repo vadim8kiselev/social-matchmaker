@@ -9,7 +9,10 @@
 <div class="wrapper"></div>
 <div class="info"></div>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/downloadjs/1.4.7/download.min.js" type="text/javascript"></script>
-<script src="/static/js/code.js"></script>
+<script src="https://rawgit.com/notifyjs/notifyjs/master/dist/notify.js" type="text/javascript"></script>
+<script src="/static/js/behaviors.js"></script>
+<script src="/static/js/elements.js"></script>
+<script src="/static/js/operations.js"></script>
+<script src="/static/js/entry.js"></script>
 </body>
 </html>

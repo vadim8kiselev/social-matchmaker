@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +42,7 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
                 .lastName(externalUser.getLastName())
                 .screenName(nonNull(externalUser.getScreenName()))
                 .sex(nonNull(externalUser.getSex()))
-                .birthday(nonNull(externalUser.getBdate()))
+                .birthday(dateToString(nonNull(externalUser.getBdate())))
                 .online(String.valueOf(externalUser.isOnline() || externalUser.isOnlineMobile()))
                 .photoLink(externalUser.getPhotoMaxOrig())
 
@@ -213,6 +214,10 @@ public class VKEntityConverter implements EntityConverter<UserFull, WallpostFull
         } else {
             return "";
         }
+    }
+
+    private String dateToString(String date) {
+        return Pattern.matches("\\d+\\.\\d+\\.\\d+", date) ? date : "";
     }
 
     private String careerToString(Career career) {

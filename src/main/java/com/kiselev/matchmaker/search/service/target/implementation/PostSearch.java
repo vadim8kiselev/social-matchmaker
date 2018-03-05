@@ -40,6 +40,12 @@ public class PostSearch implements GeneralPostSearch {
     private List<Post> posts;
 
     @Override
+    public PostSearchContract with() {
+        // Not supported for posts
+        return this;
+    }
+
+    @Override
     public UserSearchConcept likes() {
         List<User> likes = posts.stream()
                 .map(Post::getId)
@@ -61,7 +67,7 @@ public class PostSearch implements GeneralPostSearch {
 
     @Override
     public GeneralPostSearch fromEntities(List<Post> posts) {
-        this.posts = Lists.newArrayList(posts);
+        this.posts = Lists.newArrayList(Sets.newLinkedHashSet(posts));
         return this;
     }
 

@@ -6,15 +6,15 @@ import org.springframework.beans.factory.annotation.Value;
 @Getter
 public class VKAPIConfiguration {
 
-    @Value("${vk.api.clientId}")
+    @Value("${vk.api.client-id}")
     private Integer clientId;
 
-    @Value("${vk.api.clientSecret}")
+    @Value("${vk.api.client-secret}")
     private String clientSecret;
 
-    @Value("${vk.api.redirectUri}")
+    @Value("${vk.api.redirect-uri}")
     private String redirectUri;
 
-    @Value("${vk.api.secretCode}")
+    @Value("${vk.api.secret-code}")
     private String secretCode;
 }

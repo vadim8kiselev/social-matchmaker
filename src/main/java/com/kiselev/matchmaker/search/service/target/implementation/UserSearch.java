@@ -16,6 +16,7 @@ import com.kiselev.matchmaker.search.service.concept.UserSearchConcept;
 import com.kiselev.matchmaker.search.service.contract.UserSearchContract;
 import com.kiselev.matchmaker.search.service.target.factory.SearchFactory;
 import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
+import com.kiselev.matchmaker.statistics.db.dao.DAO;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -40,6 +41,15 @@ public class UserSearch implements GeneralUserSearch {
     @JsonProperty
     private List<User> users;
 
+    @JsonProperty
+    private boolean append = false;
+
+    @Override
+    public UserSearchContract with() {
+        this.append = true;
+        return this;
+    }
+
     @Override
     public UserSearchConcept friends() {
         List<User> friends = users.stream()
@@ -47,7 +57,12 @@ public class UserSearch implements GeneralUserSearch {
                 .map(socialNetworkAPI::getFriendsByUserId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return fromEntities(friends);
+
+        if (append) {
+            friends.addAll(users);
+        }
+
+        return searchFactory.userSearch().fromEntities(friends);
     }
 
     @Override
@@ -57,7 +72,12 @@ public class UserSearch implements GeneralUserSearch {
                 .map(socialNetworkAPI::getFollowersByUserId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return fromEntities(followers);
+
+        if (append) {
+            followers.addAll(users);
+        }
+
+        return searchFactory.userSearch().fromEntities(followers);
     }
 
     @Override
@@ -67,7 +87,12 @@ public class UserSearch implements GeneralUserSearch {
                 .map(socialNetworkAPI::getSubscriptionsByUserId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());
-        return fromEntities(subscriptions);
+
+        if (append) {
+            subscriptions.addAll(users);
+        }
+
+        return searchFactory.userSearch().fromEntities(subscriptions);
     }
 
     @Override
@@ -92,7 +117,7 @@ public class UserSearch implements GeneralUserSearch {
 
     @Override
     public GeneralUserSearch fromEntities(List<User> users) {
-        this.users = Lists.newArrayList(users);
+        this.users = Lists.newArrayList(Sets.newLinkedHashSet(users));
         return this;
     }
 

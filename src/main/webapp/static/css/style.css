@@ -71,14 +71,15 @@ body {
 
 /* Cross */
 .cross {
-    width: 32px;
-    height: 32px;
+    width: 25px;
+    height: 25px;
 
-    margin: 5px 0 0 5px;
+    margin: 12px 0 0 8px;
 
     float: left;
     opacity: 0.2;
 }
+
 .cross:hover {
     opacity: 1;
 }
@@ -102,6 +103,10 @@ body {
 }
 
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

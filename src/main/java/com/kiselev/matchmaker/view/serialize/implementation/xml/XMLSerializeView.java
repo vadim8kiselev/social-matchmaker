@@ -34,7 +34,7 @@ public class XMLSerializeView implements SerializeView {
     }
 
     @Override
-    public <Pojo extends Entity> File serialize(List<Pojo> entities){
+    public <Pojo extends Entity> File serialize(List<Pojo> entities) {
         try {
             return writeXMLToNewFile(entities);
         } catch (IOException | JAXBException secondException) {

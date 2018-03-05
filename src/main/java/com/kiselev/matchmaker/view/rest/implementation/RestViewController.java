@@ -13,25 +13,26 @@ import com.kiselev.matchmaker.search.service.contract.UserSearchContract;
 import com.kiselev.matchmaker.search.service.target.general.GeneralGroupSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
 import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
+import com.kiselev.matchmaker.statistics.db.dao.DAO;
 import com.kiselev.matchmaker.view.rest.model.SearchResponse;
 import com.kiselev.matchmaker.view.rest.resolver.MethodResolver;
 import com.kiselev.matchmaker.view.serialize.SerializeView;
 import com.kiselev.matchmaker.view.serialize.resolver.SerializeResolver;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,14 +43,21 @@ import java.util.List;
 @RequestMapping("/api")
 public class RestViewController {
 
+    private static final String APPLICATION_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+    private static final String APPLICATION_CSV = "application/csv";
+
     @Autowired
     private Search search;
 
     @Autowired
+    private DAO dao;
+
+    @Autowired
     private SerializeResolver serializeResolver;
 
-    @RequestMapping(path = "/start", method = RequestMethod.GET)
-    public SearchResponse start() {
+    @RequestMapping(path = "/search", method = RequestMethod.GET)
+    public SearchResponse search() {
         return SearchResponse.of(null, MethodResolver.availableMethodsOf(Search.class));
     }
 
@@ -143,6 +151,24 @@ public class RestViewController {
         return SearchResponse.of(posts, MethodResolver.availableMethodsOf(PostSearchConcept.class));
     }
 
+    @RequestMapping(path = "/user/with", method = RequestMethod.POST)
+    public SearchResponse with(@RequestBody UserSearchContract userSearch) {
+        UserSearchContract posts = userSearch.with();
+        return SearchResponse.of(posts, MethodResolver.availableMethodsOf(UserSearchContract.class));
+    }
+
+    @RequestMapping(path = "/post/with", method = RequestMethod.POST)
+    public SearchResponse with(@RequestBody PostSearchContract postSearch) {
+        PostSearchContract posts = postSearch.with();
+        return SearchResponse.of(posts, MethodResolver.availableMethodsOf(PostSearchContract.class));
+    }
+
+    @RequestMapping(path = "/group/with", method = RequestMethod.POST)
+    public SearchResponse with(@RequestBody GroupSearchContract groupSearch) {
+        GroupSearchContract posts = groupSearch.with();
+        return SearchResponse.of(posts, MethodResolver.availableMethodsOf(GroupSearchContract.class));
+    }
+
     @RequestMapping(path = "/user/where", method = RequestMethod.POST)
     public SearchResponse where(@RequestBody UserSearchConcept userSearchConcept /* Condition condition */) {
         UserSearchConcept where = userSearchConcept.where(null);
@@ -180,47 +206,59 @@ public class RestViewController {
     }
 
     @RequestMapping(path = "/user/perform", method = RequestMethod.POST)
-    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({APPLICATION_XLSX, APPLICATION_CSV, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public void perform(@RequestBody GeneralUserSearch userSearch,
                         @RequestParam(value = "type", defaultValue = "json") String type,
                         HttpServletResponse response) throws IOException {
         List<User> users = userSearch.perform();
+        dao.saveUsers(users);
 
         SerializeView serializer = serializeResolver.resolve(type);
         File file = serializer.serialize(users);
         response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        try (FileInputStream inputStream = new FileInputStream(file);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            IOUtils.copy(inputStream, outputStream);
+        }
         response.flushBuffer();
     }
 
     @RequestMapping(path = "/post/perform", method = RequestMethod.POST)
-    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({APPLICATION_XLSX, APPLICATION_CSV, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public void perform(@RequestBody GeneralPostSearch postSearch,
                         @RequestParam(value = "type", defaultValue = "json") String type,
                         HttpServletResponse response) throws IOException {
         List<Post> posts = postSearch.perform();
+        dao.savePosts(posts);
 
         SerializeView serializer = serializeResolver.resolve(type);
         File file = serializer.serialize(posts);
         response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        try (FileInputStream inputStream = new FileInputStream(file);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            IOUtils.copy(inputStream, outputStream);
+        }
         response.flushBuffer();
     }
 
     @RequestMapping(path = "/group/perform", method = RequestMethod.POST)
-    @Produces({MediaType.APPLICATION_OCTET_STREAM, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+    @Produces({APPLICATION_XLSX, APPLICATION_CSV, MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public void perform(@RequestBody GeneralGroupSearch groupSearch,
                         @RequestParam(value = "type", defaultValue = "json") String type,
                         HttpServletResponse response) throws IOException {
         List<Group> groups = groupSearch.perform();
+        dao.saveGroups(groups);
 
         SerializeView serializer = serializeResolver.resolve(type);
         File file = serializer.serialize(groups);
         response.setHeader("Content-Disposition", "attachment; filename=" + file.getName());
 
-        IOUtils.copy(new FileInputStream(file), response.getOutputStream());
+        try (FileInputStream inputStream = new FileInputStream(file);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            IOUtils.copy(inputStream, outputStream);
+        }
         response.flushBuffer();
     }
 }

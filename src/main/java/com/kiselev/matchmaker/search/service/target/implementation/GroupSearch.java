@@ -42,6 +42,12 @@ public class GroupSearch implements GeneralGroupSearch {
     private List<Group> groups;
 
     @Override
+    public GroupSearchContract with() {
+        // Not supported for posts
+        return this;
+    }
+
+    @Override
     public UserSearchConcept subscribers() {
         List<User> subscribers = groups.stream()
                 .map(Group::getId)
@@ -63,7 +69,7 @@ public class GroupSearch implements GeneralGroupSearch {
 
     @Override
     public GeneralGroupSearch fromEntities(List<Group> groups) {
-        this.groups = Lists.newArrayList(groups);
+        this.groups = Lists.newArrayList(Sets.newLinkedHashSet(groups));
         return this;
     }
 

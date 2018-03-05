@@ -23,11 +23,11 @@ public class ConditionMatcher {
 
     @PostConstruct
     public void matchConditions() {
-        LOGGER.info("Start matching equal entities fields with mappers keys");
+        LOGGER.info("[MAPPER VALIDATOR] Start matching equal entities fields with mappers keys");
         matchUserConditions();
         matchPostConditions();
         matchGroupConditions();
-        LOGGER.info("End matching equal entities fields with mappers keys");
+        LOGGER.info("[MAPPER VALIDATOR] End matching equal entities fields with mappers keys");
     }
 
     private void matchUserConditions() {

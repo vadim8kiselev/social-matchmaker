@@ -7,7 +7,6 @@ import com.kiselev.matchmaker.search.service.concept.general.GeneralSearchConcep
 import com.kiselev.matchmaker.search.service.contract.PostSearchContract;
 import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
 import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
-import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
 
 @JsonDeserialize(as = PostSearch.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")

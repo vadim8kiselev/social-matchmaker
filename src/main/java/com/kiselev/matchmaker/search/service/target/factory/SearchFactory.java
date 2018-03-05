@@ -1,30 +1,30 @@
 package com.kiselev.matchmaker.search.service.target.factory;
 
-import com.kiselev.matchmaker.search.service.target.implementation.GroupSearch;
-import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
-import com.kiselev.matchmaker.search.service.target.implementation.UserSearch;
+import com.kiselev.matchmaker.search.service.target.general.GeneralGroupSearch;
+import com.kiselev.matchmaker.search.service.target.general.GeneralPostSearch;
+import com.kiselev.matchmaker.search.service.target.general.GeneralUserSearch;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SearchFactory {
 
     @Autowired
-    private UserSearch userSearch;
+    private GeneralUserSearch userSearch;
 
     @Autowired
-    private PostSearch postSearch;
+    private GeneralPostSearch postSearch;
 
     @Autowired
-    private GroupSearch groupSearch;
+    private GeneralGroupSearch groupSearch;
 
-    public UserSearch userSearch() {
+    public GeneralUserSearch userSearch() {
         return userSearch;
     }
 
-    public PostSearch postSearch() {
+    public GeneralPostSearch postSearch() {
         return postSearch;
     }
 
-    public GroupSearch groupSearch() {
+    public GeneralGroupSearch groupSearch() {
         return groupSearch;
     }
 }

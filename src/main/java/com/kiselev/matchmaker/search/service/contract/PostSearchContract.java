@@ -8,7 +8,7 @@ import com.kiselev.matchmaker.search.service.target.implementation.PostSearch;
 
 @JsonDeserialize(as = PostSearch.class)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-public interface PostSearchContract extends GeneralSearchContract {
+public interface PostSearchContract extends GeneralSearchContract<PostSearchContract> {
 
     UserSearchConcept likes();
 

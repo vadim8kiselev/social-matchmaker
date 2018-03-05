@@ -1,13 +1,12 @@
 package com.kiselev.matchmaker.api.network.vk;
 
 import com.kiselev.matchmaker.api.network.vk.aspect.VKCallTimeoutAspect;
+import com.kiselev.matchmaker.api.network.vk.aspect.VKHandleAPIExceptionAspect;
 import com.kiselev.matchmaker.api.network.vk.configuration.VKAPIConfiguration;
 import com.kiselev.matchmaker.api.network.vk.converter.VKEntityConverter;
 import com.kiselev.matchmaker.api.network.vk.implementation.VKAPI;
-import com.kiselev.matchmaker.api.network.vk.implementation.internal.VKAPIInternal;
-import org.springframework.cache.CacheManager;
+import com.kiselev.matchmaker.api.network.vk.implementation.internal.VKAPIInternalProvider;
 import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -30,8 +29,8 @@ public class VKConfiguration {
     }
 
     @Bean
-    public VKAPIInternal vkapiInternal() {
-        return new VKAPIInternal();
+    public VKAPIInternalProvider vkapiInternal() {
+        return new VKAPIInternalProvider();
     }
 
     @Bean
@@ -45,7 +44,7 @@ public class VKConfiguration {
     }
 
     @Bean
-    public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("users", "posts", "groups");
+    public VKHandleAPIExceptionAspect vkHandleAPIExceptionAspect() {
+        return new VKHandleAPIExceptionAspect();
     }
 }

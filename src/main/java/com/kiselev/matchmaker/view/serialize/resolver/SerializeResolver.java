@@ -23,8 +23,6 @@ public class SerializeResolver {
 
     public SerializeView resolve(String type) {
         switch (type) {
-            case "excel":
-            case "xls":
             case "xlsx":
                 return excelSerializeView;
             case "xml":
