@@ -22,6 +22,10 @@ body {
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
+input:focus {
+    outline: none !important;
+}
+
 /* Search */
 .wrapper {
     height: 50%;
@@ -43,7 +47,7 @@ body {
     box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
 }
 
-.inner_block {
+.button {
     width: 100px;
     height: 35px;
 
@@ -60,8 +64,63 @@ body {
     box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
 }
 
-.dialog {
+.paramBlock {
+    height: 35px;
+    width: 315px;
 
+    margin: 15px 10px 0 10px;
+    padding: 15px 0 0 15px;
+
+    position: relative;
+    background: #f7f7f7;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.dialog {
+    width: 350px;
+
+    padding: 10px;
+
+    cursor: default;
+    float: left;
+
+    position: absolute;
+    top: 45%;
+    left: 45%;
+    z-index: 9000;
+
+    background: #fff;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
+}
+
+.dialog .paramBlock:last-child {
+    margin-bottom: 15px;
+}
+
+.inputField {
+    width: 240px;
+    height: 20px;
+
+    border: 0;
+
+    padding-left: 10px;
+
+    background: #fff;
+}
+
+.ok {
+    width: 330px;
+    height: 25px;
+
+    margin: 15px 10px 10px 10px;
+    padding: 10px 0 0 0;
+
+    background-color: #edfdf0;
+    text-align: center;
+    border-radius: 2px;
+    box-shadow: 0 1px 0 0 #d7d8db, 0 0 0 1px #e3e4e8;
 }
 
 /* Info */

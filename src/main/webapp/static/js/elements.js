@@ -3,13 +3,50 @@ function notification(element, message, type) {
 }
 
 function dialog(params, callback) {
+    let dialog = document.createElement('div');
+    dialog.className += 'dialog';
+
     let parameters = {};
     for (let param in params) {
         if (params.hasOwnProperty(param)) {
-            parameters[params[param]] = prompt("Please, fill value for parameter '" + params[param] + "'");
+
+            let block = document.createElement('div');
+            block.className += 'paramBlock';
+
+            let label = document.createElement('span');
+            label.className += 'label';
+            label.innerText = params[param] + ': ';
+
+
+            let input = document.createElement('input');
+            input.className += 'inputField';
+
+            $(input).change(function () {
+                parameters[params[param]] = this.value;
+            });
+
+            block.appendChild(label);
+            block.appendChild(input);
+            dialog.appendChild(block);
         }
     }
-    callback(parameters);
+
+    let ok = document.createElement('div');
+    ok.className += 'ok';
+    ok.innerText = 'Submit';
+
+    dialog.appendChild(ok);
+
+    $(ok).click(function () {
+        $('.dialog').remove();
+        callback(parameters);
+    });
+
+    $('body').append(dialog);
+
+    setTimeout(function(){
+        $('.dialog .inputField').first().focus();
+    });
 }
 
 function cross(enable) {
@@ -45,7 +82,7 @@ function level(data) {
 
 function button(body, name, method, uri, parameter, color, callback) {
     let button = document.createElement('a');
-    button.className += 'inner_block';
+    button.className += 'button';
     button.innerText = name;
     button.style.backgroundColor = color;
 
