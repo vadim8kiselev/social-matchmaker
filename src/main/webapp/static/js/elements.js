@@ -49,13 +49,15 @@ function dialog(params, callback) {
     });
 }
 
-function cross(enable) {
+function cross(enable, shift) {
     if (enable) {
         let crossImg = document.createElement('img');
         crossImg.className += 'cross';
         crossImg.src += '/static/img/cross.png';
 
         crossBehavior(crossImg);
+
+        $(crossImg).css("margin-top", shift);
 
         $('.wrapper').append(crossImg);
     } else {

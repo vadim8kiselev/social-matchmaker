@@ -3,6 +3,7 @@ package com.kiselev.matchmaker.view.rest.implementation;
 import com.kiselev.matchmaker.api.model.entity.Group;
 import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
+import com.kiselev.matchmaker.search.condition.SearchCondition;
 import com.kiselev.matchmaker.search.service.Search;
 import com.kiselev.matchmaker.search.service.concept.GroupSearchConcept;
 import com.kiselev.matchmaker.search.service.concept.PostSearchConcept;
@@ -170,20 +171,20 @@ public class RestViewController {
     }
 
     @RequestMapping(path = "/user/where", method = RequestMethod.POST)
-    public SearchResponse where(@RequestBody UserSearchConcept userSearchConcept /* Condition condition */) {
-        UserSearchConcept where = userSearchConcept.where(null);
+    public SearchResponse where(@RequestBody UserSearchConcept userSearchConcept, SearchCondition condition) {
+        UserSearchConcept where = userSearchConcept.where(condition);
         return SearchResponse.of(where, MethodResolver.availableMethodsOf(UserSearchConcept.class));
     }
 
     @RequestMapping(path = "/post/where", method = RequestMethod.POST)
-    public SearchResponse where(@RequestBody PostSearchConcept postSearchConcept /* Condition condition */) {
-        PostSearchConcept where = postSearchConcept.where(null);
+    public SearchResponse where(@RequestBody PostSearchConcept postSearchConcept, SearchCondition condition) {
+        PostSearchConcept where = postSearchConcept.where(condition);
         return SearchResponse.of(where, MethodResolver.availableMethodsOf(PostSearchConcept.class));
     }
 
     @RequestMapping(path = "/group/where", method = RequestMethod.POST)
-    public SearchResponse where(@RequestBody GroupSearchConcept groupSearchConcept /* Condition condition */) {
-        GroupSearchConcept where = groupSearchConcept.where(null);
+    public SearchResponse where(@RequestBody GroupSearchConcept groupSearchConcept, SearchCondition condition) {
+        GroupSearchConcept where = groupSearchConcept.where(condition);
         return SearchResponse.of(where, MethodResolver.availableMethodsOf(GroupSearchConcept.class));
     }
 

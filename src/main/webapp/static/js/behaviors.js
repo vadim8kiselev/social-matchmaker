@@ -14,13 +14,20 @@ function levelBehavior(levelDiv, data) {
                     }));
             }
         }
+
+        let shift = 10 + Math.ceil((9 - methods.length) / 2) * 70;
+        $(levelDiv).css("margin-top", shift);
+
         $('.wrapper').append(levelDiv);
-        cross(true);
+        cross(true, shift);
     } else {
         levelDiv.appendChild(button(undefined, 'Search', 'GET', 'api/search', {}, '#f7f7f7',
             function (data) {
                 level(data)
             }));
+
+        $(levelDiv).css("margin-top", 290);
+
         $('.wrapper').append(levelDiv);
     }
 }
@@ -68,6 +75,8 @@ function crossBehavior(crossImg) {
     $(crossImg).click(function () {
         $('.wrapper .block').last().remove();
         enableLastLevel(true);
+
+        $(crossImg).css("margin-top", 315); // middle
 
         if ($('.wrapper .block').length <= 1) {
             cross(false);

@@ -24,15 +24,57 @@ public class DAOService implements DAO {
     private GroupRepository groupRepository;
 
     public void saveUsers(Iterable<User> users) {
-        userRepository.save(filterDeactivatedUsers(users));
+        try {
+            userRepository.save(filterDeactivatedUsers(users));
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public Iterable<User> findUsers() {
+        try {
+            return userRepository.findAll();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return Lists.newArrayList();
+        }
     }
 
     public void savePosts(Iterable<Post> posts) {
-        postRepository.save(posts);
+        try {
+            postRepository.save(posts);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public Iterable<Post> findPosts() {
+        try {
+            return postRepository.findAll();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return Lists.newArrayList();
+        }
     }
 
     public void saveGroups(Iterable<Group> groups) {
-        groupRepository.save(groups);
+        try {
+            groupRepository.save(groups);
+        } catch (Exception exception) {
+            exception.printStackTrace();
+        }
+    }
+
+    @Override
+    public Iterable<Group> findGroups() {
+        try {
+            return groupRepository.findAll();
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return Lists.newArrayList();
+        }
     }
 
     private Iterable<User> filterDeactivatedUsers(Iterable<User> users) {

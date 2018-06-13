@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class XMLSerializeView implements SerializeView {
 
-    private static final String PATH = "export\\xml\\";
+    private static final String PATH = "export/xml/";
     private static final String EXTENSION = ".xml";
 
     @Override

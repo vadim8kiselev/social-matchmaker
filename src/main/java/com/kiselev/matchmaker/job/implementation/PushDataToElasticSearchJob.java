@@ -6,6 +6,7 @@ import com.kiselev.matchmaker.api.model.entity.Post;
 import com.kiselev.matchmaker.api.model.entity.User;
 import com.kiselev.matchmaker.job.Job;
 import com.kiselev.matchmaker.statistics.StatisticsService;
+import com.kiselev.matchmaker.statistics.db.dao.DAO;
 import com.kiselev.matchmaker.statistics.db.repository.GroupRepository;
 import com.kiselev.matchmaker.statistics.db.repository.PostRepository;
 import com.kiselev.matchmaker.statistics.db.repository.UserRepository;
@@ -19,13 +20,7 @@ import java.util.List;
 public class PushDataToElasticSearchJob implements Job {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
+    private DAO dao;
 
     @Autowired
     private StatisticsService statisticsService;
@@ -50,7 +45,7 @@ public class PushDataToElasticSearchJob implements Job {
     }
 
     private void postUsers() {
-        List<User> users = Lists.newArrayList(userRepository.findAll());
+        List<User> users = Lists.newArrayList(dao.findUsers());
         if (!users.equals(this.users)) {
             statisticsService.postUsers(users);
             this.users = users;
@@ -58,7 +53,7 @@ public class PushDataToElasticSearchJob implements Job {
     }
 
     private void postPosts() {
-        List<Post> posts = Lists.newArrayList(postRepository.findAll());
+        List<Post> posts = Lists.newArrayList(dao.findPosts());
         if (!posts.equals(this.posts)) {
             statisticsService.postPosts(posts);
             this.posts = posts;
@@ -66,7 +61,7 @@ public class PushDataToElasticSearchJob implements Job {
     }
 
     private void postGroups() {
-        List<Group> groups = Lists.newArrayList(groupRepository.findAll());
+        List<Group> groups = Lists.newArrayList(dao.findGroups());
         if (!groups.equals(this.groups)) {
             statisticsService.postGroups(groups);
             this.groups = groups;

@@ -15,7 +15,7 @@ import java.util.UUID;
 
 public class JSONSerializeView implements SerializeView {
 
-    private static final String PATH = "export\\json\\";
+    private static final String PATH = "export/json/";
     private static final String EXTENSION = ".json";
 
     @Autowired

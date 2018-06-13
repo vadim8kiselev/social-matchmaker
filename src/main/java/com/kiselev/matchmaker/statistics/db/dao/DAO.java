@@ -8,7 +8,13 @@ public interface DAO {
 
     void saveUsers(Iterable<User> users);
 
+    Iterable<User> findUsers();
+
     void savePosts(Iterable<Post> posts);
 
+    Iterable<Post> findPosts();
+
     void saveGroups(Iterable<Group> groups);
+
+    Iterable<Group> findGroups();
 }

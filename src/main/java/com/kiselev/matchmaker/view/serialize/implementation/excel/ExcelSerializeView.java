@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class ExcelSerializeView implements SerializeView {
 
-    private static final String PATH = "export\\excel\\";
+    private static final String PATH = "export/excel/";
 
     private static final String EXTENSION = ".xlsx";
 

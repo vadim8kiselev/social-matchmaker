@@ -15,10 +15,10 @@ public class ClearOldSerializedFileJob implements Job {
 
     static {
         directoryPaths = Lists.newArrayList();
-        directoryPaths.add("export\\csv");
-        directoryPaths.add("export\\excel");
-        directoryPaths.add("export\\json");
-        directoryPaths.add("export\\xml");
+        directoryPaths.add("export/csv");
+        directoryPaths.add("export/excel");
+        directoryPaths.add("export/json");
+        directoryPaths.add("export/xml");
     }
 
     @Override

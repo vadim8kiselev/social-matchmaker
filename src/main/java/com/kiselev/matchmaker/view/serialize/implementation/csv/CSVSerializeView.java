@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class CSVSerializeView implements SerializeView {
 
-    private static final String PATH = "export\\csv\\";
+    private static final String PATH = "export/csv/";
     private static final String EXTENSION = ".csv";
 
     @Override
