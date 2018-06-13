@@ -17,4 +17,11 @@ public class VKAPIConfiguration {
 
     @Value("${vk.api.secret-code}")
     private String secretCode;
+
+    // Optional
+    @Value("${vk.api.user-id}")
+    private Integer userId;
+
+    @Value("${vk.api.token}")
+    private String token;
 }

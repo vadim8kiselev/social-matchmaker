@@ -60,7 +60,7 @@ public class GroupSearch implements GeneralGroupSearch {
     @Override
     public PostSearchConcept posts() {
         List<Post> posts = groups.stream()
-                .map(Group::getId)
+                .map(group -> "-" + group.getId()) // not documented point
                 .map(socialNetworkAPI::getPostsByGroupId)
                 .flatMap(List::stream)
                 .collect(Collectors.toList());

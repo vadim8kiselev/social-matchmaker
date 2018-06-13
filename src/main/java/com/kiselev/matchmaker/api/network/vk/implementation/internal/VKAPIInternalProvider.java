@@ -93,7 +93,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             GetFieldsResponse execute = query.execute();
             friends.addAll(execute.getItems());
 
-            if (execute.getCount().equals(MaxCount.FRIENDS_GET)) {
+            if (MaxCount.FRIENDS_GET.equals(execute.getItems().size())) {
                 friends.addAll(query
                         .offset(MaxCount.FRIENDS_GET)
                         .execute().getItems());
@@ -119,7 +119,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             GetFollowersFieldsResponse response = query.offset(offset).execute();
 
             List<UserFull> followers = response.getItems();
-            while (response.getCount().equals(MaxCount.USERS_GET_FOLLOWERS)) {
+            while (MaxCount.USERS_GET_FOLLOWERS.equals(response.getItems().size())) {
                 response = query.offset(offset).execute();
                 followers.addAll(response.getItems());
                 offset += MaxCount.USERS_GET_FOLLOWERS;
@@ -148,7 +148,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             VKUtils.timeout();
 
             List<Integer> subscriptionsIds = response.getUsers().getItems();
-            while (response.getUsers().getCount().equals(MaxCount.USERS_GET_SUBSCRIPTIONS)) {
+            while (MaxCount.USERS_GET_SUBSCRIPTIONS.equals(response.getUsers().getItems().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 subscriptionsIds.addAll(response.getUsers().getItems());
@@ -183,7 +183,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             VKUtils.timeout();
 
             List<Integer> groupsIds = response.getItems();
-            while (response.getCount().equals(MaxCount.GROUPS_GET)) {
+            while (MaxCount.GROUPS_GET.equals(response.getItems().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 groupsIds.addAll(response.getItems());
@@ -232,7 +232,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             VKUtils.timeout();
 
             List<Integer> likesIds = response.getItems();
-            while (response.getCount().equals(MaxCount.LIKES_GET_LIST)) {
+            while (MaxCount.LIKES_GET_LIST.equals(response.getItems().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 likesIds.addAll(response.getItems());
@@ -265,7 +265,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
                     .map(com.vk.api.sdk.objects.users.User::getId)
                     .collect(Collectors.toList());
 
-            while (response.getProfiles().size() == MaxCount.WALL_GET_REPOSTS) {
+            while (MaxCount.WALL_GET_REPOSTS.equals(response.getProfiles().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 sharersIds.addAll(response.getProfiles().stream()
@@ -314,7 +314,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             VKUtils.timeout();
 
             List<Integer> subscribersIds = response.getItems();
-            while (response.getCount().equals(MaxCount.GROUPS_GET_MEMBERS)) {
+            while (MaxCount.GROUPS_GET_MEMBERS.equals(response.getItems().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 subscribersIds.addAll(response.getItems());
@@ -347,7 +347,7 @@ public class VKAPIInternalProvider implements VKAPIInternal {
             VKUtils.timeout();
 
             List<WallpostFull> posts = response.getItems();
-            while (response.getCount().equals(MaxCount.WALL_GET)) {
+            while (MaxCount.WALL_GET.equals(response.getItems().size())) {
                 response = query.offset(offset).execute();
                 VKUtils.timeout();
                 posts.addAll(response.getItems());

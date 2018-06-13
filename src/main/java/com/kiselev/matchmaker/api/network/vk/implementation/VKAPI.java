@@ -36,17 +36,27 @@ public class VKAPI implements SocialNetworkAPI {
         VkApiClient vk = new VkApiClient(HttpTransportClient.getInstance(), new Gson(), Integer.MAX_VALUE);
         UserActor user;
 
-        try {
-            UserAuthResponse authResponse = vk.oauth()
-                    .userAuthorizationCodeFlow(configuration.getClientId(),
-                            configuration.getClientSecret(),
-                            configuration.getRedirectUri(),
-                            configuration.getSecretCode())
-                    .execute();
+        final boolean TOKEN_UPDATED = true;
 
-            Integer userId = authResponse.getUserId();
-            String accessToken = authResponse.getAccessToken();
-            user = new UserActor(userId, accessToken);
+        try {
+            if (TOKEN_UPDATED) {
+                Integer userId = configuration.getUserId();
+                String accessToken = configuration.getToken();
+                user = new UserActor(userId, accessToken);
+            } else {
+                UserAuthResponse authResponse = vk.oauth()
+                        .userAuthorizationCodeFlow(configuration.getClientId(),
+                                configuration.getClientSecret(),
+                                configuration.getRedirectUri(),
+                                configuration.getSecretCode())
+                        .execute();
+
+                Integer userId = authResponse.getUserId();
+                String accessToken = authResponse.getAccessToken();
+                user = new UserActor(userId, accessToken);
+
+                System.out.println("\n\nAccess token: " + accessToken + "\n\n");
+            }
 
             api.auth(vk, user);
         } catch (ApiException | ClientException exception) {
