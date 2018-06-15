@@ -25,9 +25,9 @@ public class PushDataToElasticSearchJob implements Job {
     @Autowired
     private StatisticsService statisticsService;
 
-    private Iterable<User> users = Lists.newArrayList();
-    private Iterable<Post> posts = Lists.newArrayList();
-    private Iterable<Group> groups = Lists.newArrayList();
+    private Iterable<User> users;
+    private Iterable<Post> posts;
+    private Iterable<Group> groups;
 
     @Override
     @PostConstruct
@@ -70,7 +70,7 @@ public class PushDataToElasticSearchJob implements Job {
 
     private void sleep() {
         try {
-            Thread.sleep(10 * 60 * 1000); // 10 minutes
+            Thread.sleep(60 * 1000); // 1 minute
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

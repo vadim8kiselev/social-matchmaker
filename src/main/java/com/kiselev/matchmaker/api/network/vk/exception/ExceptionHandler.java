@@ -13,7 +13,7 @@ public class ExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExceptionHandler.class);
 
     public static void rethrowException(Throwable throwable) {
-        throw new RuntimeException(throwable);
+        // skip
     }
 
     public static void handleException(Throwable throwable) throws Throwable {
