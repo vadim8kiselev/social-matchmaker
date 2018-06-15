@@ -23,58 +23,75 @@ public class DAOService implements DAO {
     @Autowired
     private GroupRepository groupRepository;
 
+    private boolean fallback = true;
+
     public void saveUsers(Iterable<User> users) {
         try {
-            userRepository.save(filterDeactivatedUsers(users));
+            if (this.fallback) {
+                userRepository.save(filterDeactivatedUsers(users));
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            this.fallback = false;
         }
     }
 
     @Override
     public Iterable<User> findUsers() {
         try {
-            return userRepository.findAll();
+            if (this.fallback) {
+                return userRepository.findAll();
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
-            return Lists.newArrayList();
+            this.fallback = false;
         }
+
+        return Lists.newArrayList();
     }
 
     public void savePosts(Iterable<Post> posts) {
         try {
-            postRepository.save(posts);
+            if (this.fallback) {
+                postRepository.save(posts);
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            this.fallback = false;
         }
     }
 
     @Override
     public Iterable<Post> findPosts() {
         try {
-            return postRepository.findAll();
+            if (this.fallback) {
+                return postRepository.findAll();
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
-            return Lists.newArrayList();
+            this.fallback = false;
         }
+
+        return Lists.newArrayList();
     }
 
     public void saveGroups(Iterable<Group> groups) {
         try {
-            groupRepository.save(groups);
+            if (this.fallback) {
+                groupRepository.save(groups);
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
+            this.fallback = false;
         }
     }
 
     @Override
     public Iterable<Group> findGroups() {
         try {
-            return groupRepository.findAll();
+            if (this.fallback) {
+                return groupRepository.findAll();
+            }
         } catch (Exception exception) {
-            exception.printStackTrace();
-            return Lists.newArrayList();
+            this.fallback = false;
         }
+
+        return Lists.newArrayList();
     }
 
     private Iterable<User> filterDeactivatedUsers(Iterable<User> users) {
